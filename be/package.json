@@ -1,0 +1,39 @@
+{
+  "name": "be",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "test": "jest",
+    "start": "nodemon src/main.js"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
+  },
+  "author": "Ngurah Arya",
+  "license": "ISC",
+  "type": "module",
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.3",
+    "@types/bcrypt": "^6.0.0",
+    "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
+    "@types/supertest": "^6.0.3",
+    "@types/uuid": "^10.0.0",
+    "babel-jest": "^30.1.2",
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "jest": "^30.1.3",
+    "joi": "^18.0.1",
+    "prisma": "^6.15.0",
+    "supertest": "^7.1.4",
+    "uuid": "^11.1.0",
+    "winston": "^3.17.0"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.15.0",
+    "nodemon": "^3.1.10"
+  }
+}
