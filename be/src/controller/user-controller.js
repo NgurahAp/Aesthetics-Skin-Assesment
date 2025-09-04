@@ -1,5 +1,6 @@
 import userService from "../service/user-service.js";
 import { logger } from "../application/logging.js";
+import passport from "passport";
 
 const login = async (req, res, next) => {
   try {
@@ -31,5 +32,39 @@ const register = async (req, res, next) => {
   }
 };
 
+const googleLogin = (req, res, next) => {
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })(req, res, next);
+};
 
-export default { login, register};
+const googleCallback = (req, res, next) => {
+  passport.authenticate(
+    "google",
+    {
+      failureRedirect: "/login",
+    },
+    (err, user) => {
+      if (err) {
+        logger.error("Google OAuth failed", { error: err.message });
+        return res.status(500).json({
+          error: "Authentication failed",
+        });
+      }
+
+      if (!user) {
+        return res.status(401).json({
+          error: "Authentication failed",
+        });
+      }
+
+      // Success - return user data
+      res.status(200).json({
+        data: user,
+        message: "Google login successful",
+      });
+    }
+  )(req, res, next);
+};
+
+export default { login, register, googleLogin, googleCallback };
