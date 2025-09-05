@@ -1,48 +1,54 @@
-"use client"
+"use client";
 
 import Text from "@/components/input/Text";
-import clsx from "clsx";
 import Image from "next/image";
 import { useState } from "react";
+import Link from "next/link";
+import { clsx } from "clsx";
+import { toast } from "sonner";
+import { useLogin } from "@/hooks/auth-hooks";
+import { LoginFormData, loginSchema } from "@/lib/validation";
 
-export default function Login() {
+export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // const validateForm = (): boolean => {
-  //   const result = loginSchema.safeParse({ email, password });
+  const loginMutation = useLogin();
 
-  //   if (result.success) {
-  //     setErrors({});
-  //     return true;
-  //   }
+  const validateForm = (): boolean => {
+    const result = loginSchema.safeParse({ email, password });
 
-  //   const formattedErrors: Record<string, string> = {};
+    if (result.success) {
+      setErrors({});
+      return true;
+    }
 
-  //   result.error.issues.forEach((issue) => {
-  //     if (issue.path[0]) {
-  //       formattedErrors[issue.path[0] as string] = issue.message;
-  //     }
-  //   });
+    const formattedErrors: Record<string, string> = {};
 
-  //   setErrors(formattedErrors);
-  //   return false;
-  // };
+    result.error.issues.forEach((issue) => {
+      if (issue.path[0]) {
+        formattedErrors[issue.path[0] as string] = issue.message;
+      }
+    });
 
-  // const handleSubmit = async () => {
-  //   if (!validateForm()) {
-  //     toast.error("Please fix the form errors");
-  //     return;
-  //   }
+    setErrors(formattedErrors);
+    return false;
+  };
 
-  //   const formData: LoginFormData = {
-  //     email: email.trim(),
-  //     password: password,
-  //   };
+  const handleSubmit = async () => {
+    if (!validateForm()) {
+      toast.error("Please fix the form errors");
+      return;
+    }
 
-  //   loginMutation.mutate(formData);
-  // };
+    const formData: LoginFormData = {
+      email: email.trim(),
+      password: password,
+    };
+
+    loginMutation.mutate(formData);
+  };
 
   return (
     <div className="min-h-screen flex">
