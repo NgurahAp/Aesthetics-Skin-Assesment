@@ -41,6 +41,37 @@ export const useLogin = () => {
   });
 };
 
+export const useGoogleLogin = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login } = useAuthStore();
+
+  return useMutation({
+    mutationFn: authService.initiateGoogleLogin,
+    onSuccess: (data: any) => {
+      if (data.user) {
+        login(data.user);
+        toast.success(data.message || "Google login successful!");
+        const redirectTo = searchParams.get("redirect") || "/todo";
+        router.push(redirectTo);
+      }
+    },
+    onError: (error: Error) => {
+      console.error("Google login error:", error);
+      
+      if (error.message === 'Login cancelled') {
+        return;
+      }
+      
+      if (error.message.includes('Popup blocked')) {
+        toast.error("Please allow popups and try again");
+      } else {
+        toast.error(error.message || "Google login failed");
+      }
+    },
+  });
+};
+
 export const useRegister = () => {
   const router = useRouter();
   const searchParams = useSearchParams();

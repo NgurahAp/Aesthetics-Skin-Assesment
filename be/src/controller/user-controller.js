@@ -49,22 +49,42 @@ const googleCallback = (req, res, next) => {
     (err, user) => {
       if (err) {
         logger.error("Google OAuth failed", { error: err.message });
-        return res.status(500).json({
-          error: "Authentication failed",
-        });
+
+        // Kirim error ke parent window (popup)
+        return res.send(`
+          <script>
+            window.opener.postMessage({
+              success: false,
+              error: 'Authentication failed'
+            }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
+            window.close();
+          </script>
+        `);
       }
 
       if (!user) {
-        return res.status(401).json({
-          error: "Authentication failed",
-        });
+        return res.send(`
+          <script>
+            window.opener.postMessage({
+              success: false,
+              error: 'Authentication failed'
+            }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
+            window.close();
+          </script>
+        `);
       }
 
-      // Success - return user data
-      res.status(200).json({
-        data: user,
-        message: "Google login successful",
-      });
+      // Success - kirim user data ke parent window
+      return res.send(`
+        <script>
+          window.opener.postMessage({
+            success: true,
+            user: ${JSON.stringify(user)},
+            message: 'Google login successful'
+          }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
+          window.close();
+        </script>
+      `);
     }
   )(req, res, next);
 };
