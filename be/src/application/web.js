@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import session from "express-session";
 import { publicRouter } from "../route/public-api.js";
 import { errorMiddleware } from "../middleware/error-middleware.js";
@@ -6,6 +7,15 @@ import passport from "../config/passport.js";
 // import { userRouter } from "../route/api.js";
 
 export const web = express();
+
+web.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 web.use(express.json());
 

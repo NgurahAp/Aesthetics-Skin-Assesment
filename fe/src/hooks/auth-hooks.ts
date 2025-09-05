@@ -13,7 +13,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
-      login(data.content.user, data.content.token);
+      login(data.data);
 
       toast.success(data.message || "Login successful!");
 
@@ -49,7 +49,7 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: authService.register,
     onSuccess: (data) => {
-      login(data.content.user, data.content.token);
+      // login(data.content.user, data.content.token);
 
       toast.success(data.message || "Register successful!");
 

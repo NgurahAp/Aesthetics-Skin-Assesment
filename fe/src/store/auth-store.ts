@@ -7,13 +7,11 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set, get) => ({
       user: null,
-      token: null,
       isAuthenticated: false,
 
-      login: (user: User, token: string) => {
+      login: (user: User) => {
         const newState = {
           user,
-          token,
           isAuthenticated: true,
         };
         set(newState);
@@ -24,7 +22,6 @@ export const useAuthStore = create<AuthState>()(
       logout: () => {
         const newState = {
           user: null,
-          token: null,
           isAuthenticated: false,
         };
         set(newState);

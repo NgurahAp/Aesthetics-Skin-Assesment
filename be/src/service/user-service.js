@@ -1,6 +1,9 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
-import { loginUserValidation } from "../validation/user-validation.js";
+import {
+  loginUserValidation,
+  registerUserValidation,
+} from "../validation/user-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
@@ -29,7 +32,7 @@ const login = async (request) => {
 
   const sessionKey = crypto.randomBytes(32).toString("hex");
 
-  return  prismaClient.user.update({
+  return prismaClient.user.update({
     where: {
       id: user.id,
     },
@@ -37,16 +40,17 @@ const login = async (request) => {
       session_key: sessionKey,
     },
     select: {
+      id: true,
       email: true,
-      session_key: true,
+      full_name: true,
       role: true,
-      phone_number: true,
+      session_key: true,
     },
   });
 };
 
 const register = async (request) => {
-  const registerRequest = validate(loginUserValidation, request);
+  const registerRequest = validate(registerUserValidation, request);
 
   const countUser = await prismaClient.user.count({
     where: {
@@ -63,8 +67,10 @@ const register = async (request) => {
   return prismaClient.user.create({
     data: registerRequest,
     select: {
-      email: true,
       id: true,
+      email: true,
+      full_name: true,
+      role: true,
       created_at: true,
     },
   });

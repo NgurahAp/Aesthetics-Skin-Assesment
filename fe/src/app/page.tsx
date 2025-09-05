@@ -123,10 +123,16 @@ export default function SignInPage() {
             </div>
 
             <button
-              type="submit"
-              className="w-full bg-blue-600 text-white py-3 px-4 rounded-lg font-medium hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+              onClick={handleSubmit}
+              disabled={loginMutation.isPending}
+              className={clsx(
+                "w-full font-semibold py-3 px-4 rounded-lg transition-all",
+                loginMutation.isPending
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-[#0062FF] hover:bg-blue-700 text-white"
+              )}
             >
-              Sign In
+              {loginMutation.isPending ? "Signing In..." : "Login"}
             </button>
 
             {/* Divider */}

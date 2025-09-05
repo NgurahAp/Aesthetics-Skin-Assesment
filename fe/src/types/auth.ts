@@ -1,15 +1,13 @@
 export interface User {
   id: string;
-  fullName: string;
   email: string;
+  full_name: string;
   role: string;
+  session_key: string;
 }
 
 export interface LoginResponse {
-  content: {
-    user: User;
-    token: string;
-  };
+  data: User;
   message: string;
   errors: string[];
 }
@@ -17,9 +15,7 @@ export interface LoginResponse {
 // Auth Store State
 export interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
-  login: (user: User, token: string) => void;
+  login: (user: User) => void;
   logout: () => void;
 }
-

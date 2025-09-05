@@ -3,7 +3,7 @@ import axios from "axios";
 
 // Create axios instance
 const api = axios.create({
-  baseURL: "https://fe-test-api.nwappservice.com",
+  baseURL: "http://localhost:8080/api",
   headers: {
     "Content-Type": "application/json",
   },
@@ -12,7 +12,7 @@ const api = axios.create({
 // Request interceptor untuk menambah token
 api.interceptors.request.use(
   (config) => {
-    const token = useAuthStore.getState().token;
+    const token = useAuthStore.getState().user?.session_key;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
