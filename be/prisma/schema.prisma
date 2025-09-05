@@ -20,6 +20,7 @@ model User {
   password     String?  @db.VarChar(255)
   full_name    String?  @db.VarChar(255)
   google_id    String?  @unique @db.VarChar(255) 
+  facebook_id    String?  @unique @db.VarChar(255) 
   role         Role     @default(member)
   session_key  String?  @db.VarChar(255)
   created_at   DateTime @default(now())

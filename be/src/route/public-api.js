@@ -9,4 +9,7 @@ publicRouter.post("/api/register", userController.register);
 publicRouter.get("/api/auth/google", userController.googleLogin);
 publicRouter.get("/api/auth/google/callback", userController.googleCallback);
 
+publicRouter.get("/api/auth/facebook", userController.facebookLogin);
+publicRouter.get("/api/auth/facebook/callback", userController.facebookCallback);
+
 export { publicRouter };

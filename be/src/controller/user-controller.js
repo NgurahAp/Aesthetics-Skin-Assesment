@@ -34,6 +34,7 @@ const register = async (req, res, next) => {
   }
 };
 
+// Google OAuth
 const googleLogin = (req, res, next) => {
   passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -50,12 +51,11 @@ const googleCallback = (req, res, next) => {
       if (err) {
         logger.error("Google OAuth failed", { error: err.message });
 
-        // Kirim error ke parent window (popup)
         return res.send(`
           <script>
             window.opener.postMessage({
               success: false,
-              error: 'Authentication failed'
+              error: 'Google authentication failed'
             }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
             window.close();
           </script>
@@ -67,14 +67,13 @@ const googleCallback = (req, res, next) => {
           <script>
             window.opener.postMessage({
               success: false,
-              error: 'Authentication failed'
+              error: 'Google authentication failed'
             }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
             window.close();
           </script>
         `);
       }
 
-      // Success - kirim user data ke parent window
       return res.send(`
         <script>
           window.opener.postMessage({
@@ -89,4 +88,64 @@ const googleCallback = (req, res, next) => {
   )(req, res, next);
 };
 
-export default { login, register, googleLogin, googleCallback };
+const facebookLogin = (req, res, next) => {
+  passport.authenticate("facebook", {
+    scope: ["email"],
+  })(req, res, next);
+};
+
+const facebookCallback = (req, res, next) => {
+  passport.authenticate(
+    "facebook",
+    {
+      failureRedirect: "/login",
+    },
+    (err, user) => {
+      if (err) {
+        logger.error("Facebook OAuth failed", { error: err.message });
+
+        return res.send(`
+          <script>
+            window.opener.postMessage({
+              success: false,
+              error: 'Facebook authentication failed'
+            }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
+            window.close();
+          </script>
+        `);
+      }
+
+      if (!user) {
+        return res.send(`
+          <script>
+            window.opener.postMessage({
+              success: false,
+              error: 'Facebook authentication failed'
+            }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
+            window.close();
+          </script>
+        `);
+      }
+
+      return res.send(`
+        <script>
+          window.opener.postMessage({
+            success: true,
+            user: ${JSON.stringify(user)},
+            message: 'Facebook login successful'
+          }, '${process.env.FRONTEND_URL || "http://localhost:3000"}');
+          window.close();
+        </script>
+      `);
+    }
+  )(req, res, next);
+};
+
+export default { 
+  login, 
+  register, 
+  googleLogin, 
+  googleCallback,
+  facebookLogin,
+  facebookCallback
+};
