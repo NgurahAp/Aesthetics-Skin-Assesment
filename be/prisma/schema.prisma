@@ -13,23 +13,80 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id           String   @id @default(uuid()) @db.VarChar(36)
-  email        String   @unique @db.VarChar(255)
-  password     String?  @db.VarChar(255)
-  full_name    String?  @db.VarChar(255)
-  google_id    String?  @unique @db.VarChar(255) 
-  facebook_id    String?  @unique @db.VarChar(255) 
-  role         Role     @default(member)
-  session_key  String?  @db.VarChar(255)
-  created_at   DateTime @default(now())
-  updated_at   DateTime @updatedAt
+  id                  String              @id @default(uuid()) @db.VarChar(36)
+  email               String              @unique @db.VarChar(255)
+  password            String?             @db.VarChar(255)
+  full_name           String?             @db.VarChar(255)
+  google_id           String?             @unique @db.VarChar(255) 
+  facebook_id         String?             @unique @db.VarChar(255) 
+  role                Role                @default(member)
+  Membership_package  Package             @default(A)
+  session_key         String?             @db.VarChar(255)
+  created_at          DateTime            @default(now())
+  updated_at          DateTime            @updatedAt
+
+  userContentAccess   UserContentAccess[]
 
   @@map("users")
+}
+
+model Article {
+  id         String   @id @default(uuid()) @db.VarChar(36)
+  title      String   @db.VarChar(200)
+  content    String   @db.Text
+  thumbnail  String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+
+  userContentAccess UserContentAccess[]
+
+  @@map("articles")
+}
+
+model Video {
+  id          String   @id @default(uuid()) @db.VarChar(36)
+  title       String   @db.VarChar(200)
+  url         String   @db.VarChar(500)
+  description String?  @db.Text
+  created_at  DateTime @default(now())
+
+  userContentAccess UserContentAccess[]
+
+  @@map("videos")
+}
+
+model UserContentAccess {
+  id           String      @id @default(uuid()) @db.VarChar(36)
+  user_id      String      @db.VarChar(36)
+  content_type ContentType
+  content_id   String      @db.VarChar(36)
+  accessed_at  DateTime    @default(now())
+
+  user    User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  article Article? @relation(fields: [article_id], references: [id], onDelete: Cascade)
+  video   Video?   @relation(fields: [video_id], references: [id], onDelete: Cascade)
+
+  // Virtual fields for polymorphic relation
+  article_id String? @db.VarChar(36)
+  video_id   String? @db.VarChar(36)
+
+  // Unique constraint untuk mencegah duplicate access tracking
+  @@unique([user_id, content_type, content_id], name: "unique_access")
+  @@map("user_content_access")
 }
 
 enum Role {
   member
   admin
+}
+
+enum Package {
+  A
+  B
+  C
+}
+
+enum ContentType {
+  article
+  video
 }

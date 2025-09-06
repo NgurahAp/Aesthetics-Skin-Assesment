@@ -4,7 +4,7 @@ import session from "express-session";
 import { publicRouter } from "../route/public-api.js";
 import { errorMiddleware } from "../middleware/error-middleware.js";
 import passport from "../config/passport.js";
-// import { userRouter } from "../route/api.js";
+import { userRouter } from "../route/api.js";
 
 export const web = express();
 
@@ -34,9 +34,9 @@ web.use(
 // Initialize Passport
 web.use(passport.initialize());
 web.use(passport.session());
-// web.use(userRouter)
 
 // Routers
 web.use(publicRouter);
+web.use(userRouter);
 
 web.use(errorMiddleware);

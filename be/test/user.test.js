@@ -55,6 +55,7 @@ describe("POST /api/register", function () {
 
   it("should can register new user", async () => {
     const result = await supertest(web).post("/api/register").send({
+      full_name: "test",
       email: "test@test.com",
       password: "123456",
     });
@@ -67,6 +68,7 @@ describe("POST /api/register", function () {
 
   it("should reject registration with invalid email", async () => {
     const result = await supertest(web).post("/api/register").send({
+      full_name: "test",
       email: "invalid-email",
       password: "123456",
     });
@@ -79,6 +81,7 @@ describe("POST /api/register", function () {
     await createTestUser({ email: "test@test.com" });
 
     const result = await supertest(web).post("/api/register").send({
+      full_name: "test",
       email: "test@test.com",
       password: "123456",
     });
