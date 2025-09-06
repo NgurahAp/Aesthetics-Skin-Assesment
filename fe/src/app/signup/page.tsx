@@ -60,7 +60,7 @@ export default function SignUpPage() {
     }
 
     const formData: RegisterFormData = {
-      full_name: fullName,
+      fullName: fullName,
       email: email.trim(),
       password: password,
     };
