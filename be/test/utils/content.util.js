@@ -104,3 +104,38 @@ export const deleteTestUserContentAccess = async () => {
     },
   });
 };
+
+export const createUserAccessRecords = async (userId, articleIds = [], videoIds = []) => {
+  const accessRecords = [];
+  
+  for (const articleId of articleIds) {
+    const record = await createTestUserContentAccess({
+      userId: userId,
+      contentType: "article",
+      contentId: articleId,
+      articleId: articleId,
+    });
+    accessRecords.push(record);
+  }
+  
+  for (const videoId of videoIds) {
+    const record = await createTestUserContentAccess({
+      userId: userId,
+      contentType: "video",
+      contentId: videoId,
+      videoId: videoId,
+    });
+    accessRecords.push(record);
+  }
+  
+  return accessRecords;
+};
+
+export const getContentAccessCount = async (userId, contentType) => {
+  return prismaClient.userContentAccess.count({
+    where: {
+      user_id: userId,
+      content_type: contentType,
+    },
+  });
+};
