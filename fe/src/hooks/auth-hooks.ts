@@ -14,9 +14,7 @@ export const useLogin = () => {
     mutationFn: authService.login,
     onSuccess: (data) => {
       login(data.data);
-
       toast.success(data.message || "Login successful!");
-
       const redirectTo = searchParams.get("redirect") || "/home";
       router.push(redirectTo);
     },
@@ -24,17 +22,8 @@ export const useLogin = () => {
       console.error("Login error:", error);
 
       const apiErrorData = error.response?.data;
-      let errorMessage = "Login failed. Please try again.";
-
-      if (apiErrorData) {
-        if (apiErrorData.errors && apiErrorData.errors.length > 0) {
-          errorMessage = apiErrorData.errors[0];
-        } else if (apiErrorData.message) {
-          errorMessage = apiErrorData.message;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
+      const errorMessage =
+        apiErrorData?.errors || "Login failed. Please try again.";
 
       toast.error(errorMessage);
     },
@@ -119,17 +108,8 @@ export const useRegister = () => {
       console.error("Register error:", error);
 
       const apiErrorData = error.response?.data;
-      let errorMessage = "Register failed. Please try again.";
-
-      if (apiErrorData) {
-        if (apiErrorData.errors && apiErrorData.errors.length > 0) {
-          errorMessage = apiErrorData.errors[0];
-        } else if (apiErrorData.message) {
-          errorMessage = apiErrorData.message;
-        }
-      } else if (error.message) {
-        errorMessage = error.message;
-      }
+      const errorMessage =
+        apiErrorData?.errors || "Register failed. Please try again.";
 
       toast.error(errorMessage);
     },
