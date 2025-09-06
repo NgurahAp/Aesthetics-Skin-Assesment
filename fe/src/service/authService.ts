@@ -10,7 +10,7 @@ export const authService = {
 
   register: async (data: RegisterFormData): Promise<LoginResponse> => {
     const transformedData = {
-      fullName: `${data.firstName} ${data.lastName}`,
+      fullName: data.full_name,
       email: data.email,
       password: data.password,
     };

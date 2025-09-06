@@ -1,12 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 
-
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const protectedRoutes = ["/todo"];
 
-  const publicRoutes = ["/", "/signup",];
+  const publicRoutes = ["/", "/signup"];
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
@@ -43,7 +42,7 @@ export function middleware(request: NextRequest) {
         const isAuthenticated = authData?.state?.isAuthenticated === true;
 
         if (isAuthenticated) {
-          return NextResponse.redirect(new URL("/todo", request.url));
+          return NextResponse.redirect(new URL("/home", request.url));
         }
       } catch (error) {
         console.error("Error parsing auth cookie:", error);

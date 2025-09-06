@@ -17,7 +17,7 @@ export const useLogin = () => {
 
       toast.success(data.message || "Login successful!");
 
-      const redirectTo = searchParams.get("redirect") || "/todo";
+      const redirectTo = searchParams.get("redirect") || "/home";
       router.push(redirectTo);
     },
     onError: (error: ApiError) => {
@@ -52,7 +52,7 @@ export const useGoogleLogin = () => {
       if (data.user) {
         login(data.user);
         toast.success(data.message || "Google login successful!");
-        const redirectTo = searchParams.get("redirect") || "/todo";
+        const redirectTo = searchParams.get("redirect") || "/home";
         router.push(redirectTo);
       }
     },
@@ -83,7 +83,7 @@ export const useFacebookLogin = () => {
       if (data.user) {
         login(data.user);
         toast.success(data.message || "Facebook login successful!");
-        const redirectTo = searchParams.get("redirect") || "/todo";
+        const redirectTo = searchParams.get("redirect") || "/home";
         router.push(redirectTo);
       }
     },
@@ -106,7 +106,6 @@ export const useFacebookLogin = () => {
 export const useRegister = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuthStore();
 
   return useMutation({
     mutationFn: authService.register,
