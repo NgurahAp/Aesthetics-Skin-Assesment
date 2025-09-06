@@ -58,15 +58,46 @@ export const useGoogleLogin = () => {
     },
     onError: (error: Error) => {
       console.error("Google login error:", error);
-      
-      if (error.message === 'Login cancelled') {
+
+      if (error.message === "Login cancelled") {
         return;
       }
-      
-      if (error.message.includes('Popup blocked')) {
+
+      if (error.message.includes("Popup blocked")) {
         toast.error("Please allow popups and try again");
       } else {
         toast.error(error.message || "Google login failed");
+      }
+    },
+  });
+};
+
+export const useFacebookLogin = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { login } = useAuthStore();
+
+  return useMutation({
+    mutationFn: authService.initiateFacebookLogin,
+    onSuccess: (data: any) => {
+      if (data.user) {
+        login(data.user);
+        toast.success(data.message || "Facebook login successful!");
+        const redirectTo = searchParams.get("redirect") || "/todo";
+        router.push(redirectTo);
+      }
+    },
+    onError: (error: Error) => {
+      console.error("Facebook login error:", error);
+
+      if (error.message === "Login cancelled") {
+        return;
+      }
+
+      if (error.message.includes("Popup blocked")) {
+        toast.error("Please allow popups and try again");
+      } else {
+        toast.error(error.message || "Facebook login failed");
       }
     },
   });
@@ -80,11 +111,9 @@ export const useRegister = () => {
   return useMutation({
     mutationFn: authService.register,
     onSuccess: (data) => {
-      // login(data.content.user, data.content.token);
-
       toast.success(data.message || "Register successful!");
 
-      const redirectTo = searchParams.get("redirect") || "/todo";
+      const redirectTo = searchParams.get("redirect") || "/";
       router.push(redirectTo);
     },
     onError: (error: ApiError) => {
