@@ -102,7 +102,10 @@ const HeroSection: React.FC = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuLink href="/" className="text-sm font-medium text-[#3a523a] hover:text-[#2d4a2d]">
+                  <NavigationMenuLink
+                    href="/"
+                    className="text-sm font-medium text-[#3a523a] hover:text-[#2d4a2d]"
+                  >
                     Home
                   </NavigationMenuLink>
                 </NavigationMenuItem>
@@ -161,7 +164,7 @@ const HeroSection: React.FC = () => {
               </p>
 
               <div className="flex gap-4">
-                <button className="bg-[#4c6a4c] hover:bg-[#3a523a] text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
+                <button className="bg-[#4c6a4c] hover:bg-sage-800 text-white px-6 py-3 rounded-lg font-medium transition-colors shadow-md hover:shadow-lg">
                   Start Your Journey
                 </button>
                 <button className="border border-[#6a9669] text-[#4c6a4c] hover:bg-[#6a9669] hover:text-white px-6 py-3 rounded-lg font-medium transition-colors">
