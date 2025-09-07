@@ -14,6 +14,7 @@ userRouter.put(
 );
 
 userRouter.get("/api/articles", authMiddleware, contentController.getArticles);
+userRouter.get("/api/videos", authMiddleware, contentController.getVideos);
 userRouter.get(
   "/api/articles/:articleId",
   authMiddleware,

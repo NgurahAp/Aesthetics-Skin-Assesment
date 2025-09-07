@@ -8,7 +8,21 @@ const getArticles = async (req, res, next) => {
       data: result,
     });
   } catch (e) {
-    logger.error("Get detail content failed", {
+    logger.error("Get articles content failed", {
+      error: e.message,
+    });
+    next(e);
+  }
+};
+
+const getVideos = async (req, res, next) => {
+  try {
+    const result = await contentService.getVideos(req.query);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    logger.error("Get videos content failed", {
       error: e.message,
     });
     next(e);
@@ -51,4 +65,5 @@ export default {
   getArticleDetail,
   getVideoDetail,
   getArticles,
+  getVideos,
 };

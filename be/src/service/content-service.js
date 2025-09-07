@@ -140,6 +140,40 @@ const getArticleDetail = async (articleId, user) => {
   };
 };
 
+const getVideos = async (query) => {
+  const option = validate(pagingValidation, query);
+
+  const skip = (option.page - 1) * option.size;
+
+  const totalVideos = await prismaClient.video.count({});
+
+  const videos = await prismaClient.video.findMany({
+    skip: skip,
+    take: option.size,
+    orderBy: {
+      created_at: "desc",
+    },
+    select: {
+      id: true,
+      title: true,
+      url: true,
+      description: true,
+      thumbnail: true,
+      created_at: true,
+    },
+  });
+
+  return {
+    success: true,
+    videos: videos,
+    paging: {
+      page: option.page,
+      total_items: totalVideos,
+      total_pages: Math.ceil(totalVideos / option.size),
+    },
+  };
+};
+
 const getVideoDetail = async (videoId, user) => {
   const video = await prismaClient.video.findUnique({
     where: {
@@ -245,4 +279,5 @@ export default {
   getArticleDetail,
   getVideoDetail,
   getArticles,
+  getVideos,
 };

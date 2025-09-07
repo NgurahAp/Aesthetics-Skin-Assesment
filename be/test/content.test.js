@@ -143,6 +143,233 @@ describe("Article List API", function () {
   });
 });
 
+describe("Video List API", function () {
+  let testUser;
+
+  beforeEach(async () => {
+    testUser = await createTestUser({
+      email: "videolist@test.com",
+    });
+  });
+
+  afterEach(async () => {
+    await deleteTestUserContentAccess();
+    await deleteTestVideos();
+    await deleteTestUser();
+  });
+
+  it("Should get videos list with default pagination", async () => {
+    const result = await supertest(web)
+      .get("/api/videos")
+      .set("Authorization", "Bearer session-key-test");
+
+    console.log(result.body);
+    expect(result.status).toBe(200);
+    expect(result.body.data.success).toBe(true);
+    expect(result.body.data.videos).toBeDefined();
+    expect(Array.isArray(result.body.data.videos)).toBe(true);
+    expect(result.body.data.videos.length).toBe(10);
+
+    // Check pagination info
+    expect(result.body.data.paging).toBeDefined();
+    expect(result.body.data.paging.page).toBe(1);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(2);
+
+    // Check video structure
+    const video = result.body.data.videos[0];
+    expect(video.id).toBeDefined();
+    expect(video.title).toBeDefined();
+    expect(video.url).toBeDefined();
+    expect(video.description).toBeDefined();
+    expect(video.thumbnail).toBeDefined();
+    expect(video.created_at).toBeDefined();
+  });
+
+  it("Should get videos list with custom pagination", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?page=2&size=5")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.success).toBe(true);
+    expect(result.body.data.videos.length).toBe(5);
+    expect(result.body.data.paging.page).toBe(2);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(3);
+  });
+
+  it("Should handle page beyond available pages", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?page=5&size=10")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.success).toBe(true);
+    expect(result.body.data.videos.length).toBe(0);
+    expect(result.body.data.paging.page).toBe(5);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(2);
+  });
+
+  it("Should validate pagination parameters", async () => {
+    // Test invalid page (less than 1)
+    const result1 = await supertest(web)
+      .get("/api/videos?page=0")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result1.status).toBe(400);
+
+    // Test invalid size (greater than 100)
+    const result2 = await supertest(web)
+      .get("/api/videos?size=150")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result2.status).toBe(400);
+
+    // Test non-numeric page
+    const result3 = await supertest(web)
+      .get("/api/videos?page=abc")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result3.status).toBe(400);
+  });
+
+  it("Should use default values for missing pagination parameters", async () => {
+    const result = await supertest(web)
+      .get("/api/videos")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.paging.page).toBe(1); // default page
+    expect(result.body.data.videos.length).toBe(10); // default size (10)
+  });
+
+  it("Should handle large pagination size correctly", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?size=100")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.videos.length).toBe(15); // Should return all 15 videos
+    expect(result.body.data.paging.total_pages).toBe(1);
+  });
+
+  it("Should reject request without authentication", async () => {
+    const result = await supertest(web).get("/api/videos");
+
+    expect(result.status).toBe(401);
+  });
+
+  it("Should handle pagination with exact page boundary", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?page=1&size=5")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.videos.length).toBe(5);
+    expect(result.body.data.paging.page).toBe(1);
+    expect(result.body.data.paging.total_pages).toBe(3);
+
+    // Test second page
+    const result2 = await supertest(web)
+      .get("/api/videos?page=2&size=5")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result2.status).toBe(200);
+    expect(result2.body.data.videos.length).toBe(5);
+    expect(result2.body.data.paging.page).toBe(2);
+  });
+
+  it("Should handle last page with remaining items", async () => {
+    // With 15 videos and size=10, page 2 should have 5 videos
+    const result = await supertest(web)
+      .get("/api/videos?page=2&size=10")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.videos.length).toBe(5); // Remaining videos
+    expect(result.body.data.paging.page).toBe(2);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(2);
+  });
+
+  it("Should return videos ordered by created_at desc (newest first)", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?size=15")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.videos.length).toBe(15);
+
+    // Check if videos are ordered by created_at desc
+    const videos = result.body.data.videos;
+    for (let i = 0; i < videos.length - 1; i++) {
+      const currentVideoDate = new Date(videos[i].created_at);
+      const nextVideoDate = new Date(videos[i + 1].created_at);
+      expect(currentVideoDate >= nextVideoDate).toBe(true);
+    }
+  });
+
+  it("Should return correct video fields structure", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?size=1")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    const video = result.body.data.videos[0];
+
+    // Check all required fields are present
+    expect(video.id).toBeDefined();
+    expect(video.title).toBeDefined();
+    expect(video.url).toBeDefined();
+    expect(video.description).toBeDefined();
+    expect(video.thumbnail).toBeDefined();
+    expect(video.created_at).toBeDefined();
+
+    // Check field types
+    expect(typeof video.id).toBe("string");
+    expect(typeof video.title).toBe("string");
+    expect(typeof video.url).toBe("string");
+    expect(typeof video.description).toBe("string");
+    expect(typeof video.created_at).toBe("string");
+
+    // Check no extra fields are included (adjust based on your video schema)
+    const expectedFields = [
+      "id",
+      "title",
+      "url",
+      "description",
+      "thumbnail",
+      "created_at",
+    ];
+    const actualFields = Object.keys(video);
+    expect(actualFields.sort()).toEqual(expectedFields.sort());
+  });
+
+  it("Should handle edge case with size=1", async () => {
+    const result = await supertest(web)
+      .get("/api/videos?size=1")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.videos.length).toBe(1);
+    expect(result.body.data.paging.total_pages).toBe(15); // 15 videos with size=1 = 15 pages
+  });
+
+  it("Should handle middle page correctly", async () => {
+    // Test page 2 with size=7 (15 videos total, so page 2 should have 7 videos, page 3 should have 1)
+    const result = await supertest(web)
+      .get("/api/videos?page=2&size=7")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.videos.length).toBe(7);
+    expect(result.body.data.paging.page).toBe(2);
+    expect(result.body.data.paging.total_pages).toBe(3); // Math.ceil(15/7) = 3
+  });
+});
+
 describe("Article Detail API", function () {
   let testUser;
   let testArticle;
