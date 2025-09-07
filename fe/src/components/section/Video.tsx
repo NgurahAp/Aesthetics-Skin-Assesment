@@ -11,7 +11,7 @@ const ExpertVideosSection: React.FC<ExpertVideosSectionProps> = ({
   videos = [],
 }) => {
   return (
-    <div className="py-16 px-4 bg-gradient-to-b from-[#fefcf7] to-white">
+    <div id="videos" className="py-16 px-4 bg-gradient-to-b from-[#fefcf7] to-white">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">

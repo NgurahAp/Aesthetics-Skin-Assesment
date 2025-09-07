@@ -11,7 +11,7 @@ const ExpertArticlesSection: React.FC<ExpertArticlesSectionProps> = ({
   articles = [],
 }) => {
   return (
-    <div className="py-16 px-4 bg-gradient-to-b from-white to-[#fefcf7]">
+    <div id="articles" className="py-16 px-4 bg-gradient-to-b from-white to-[#fefcf7]">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold mb-4 text-[#2d4a2d]">

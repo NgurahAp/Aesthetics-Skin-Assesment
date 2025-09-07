@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { User, Clock, Play } from "lucide-react";
 import { useVideoDetail } from "@/hooks/dashboard-hook";
 import Loading from "@/components/ui/Loading";
+import { ApiError } from "@/types/error";
 
 export default function VideoDetailPage() {
   const params = useParams();
@@ -18,13 +19,17 @@ export default function VideoDetailPage() {
   }
 
   if (isError) {
+    console.error("Error fetching article detail:", error);
+
+    const apiError = error as ApiError;
+    const errorMessage =
+      apiError?.response?.data?.errors || "Failed to load article data";
+
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-red-600 mb-2">Error</h2>
-          <p className="text-gray-600">
-            {error?.message || "Failed to load video data"}
-          </p>
+          <p className="text-gray-600">{errorMessage}</p>
         </div>
       </div>
     );
@@ -50,6 +55,11 @@ export default function VideoDetailPage() {
             src={videoData?.thumbnail}
             alt={videoData?.title}
             className="w-full h-96 object-cover"
+            onError={(e) => {
+              // Fallback image if thumbnail fails to load
+              e.currentTarget.src =
+                "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=250&fit=crop&crop=center";
+            }}
           />
           <button
             onClick={() => window.open(videoData?.url, "_blank")}

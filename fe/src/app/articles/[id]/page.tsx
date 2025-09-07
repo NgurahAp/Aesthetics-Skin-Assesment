@@ -4,6 +4,8 @@ import { useParams } from "next/navigation";
 import { User, Clock } from "lucide-react";
 import { useArticleDetail } from "@/hooks/dashboard-hook";
 import Loading from "@/components/ui/Loading";
+import { ApiError } from "@/types/error";
+import Link from "next/link";
 
 export default function ArticleDetailPage() {
   const params = useParams();
@@ -18,13 +20,24 @@ export default function ArticleDetailPage() {
   }
 
   if (isError) {
+    console.error("Error fetching article detail:", error);
+
+    const apiError = error as ApiError;
+    const errorMessage =
+      apiError?.response?.data?.errors || "Failed to load article data";
+
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Error</h2>
-          <p className="text-gray-600">
-            {error?.message || "Failed to load article data"}
+        <div className="text-center ">
+          <p className="text-lg font-bold text-[#3a523a] mb-4">
+            {errorMessage}
           </p>
+          <Link
+            href={`/`}
+            className="w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-6 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
+          >
+            Back to home
+          </Link>
         </div>
       </div>
     );
@@ -50,6 +63,11 @@ export default function ArticleDetailPage() {
             src={articleData.thumbnail}
             alt={articleData.title}
             className="w-full h-80 object-cover"
+            onError={(e) => {
+              // Fallback image if thumbnail fails to load
+              e.currentTarget.src =
+                "https://images.unsplash.com/photo-1596755389378-c31d21fd1273?w=400&h=250&fit=crop&crop=center";
+            }}
           />
         </div>
 

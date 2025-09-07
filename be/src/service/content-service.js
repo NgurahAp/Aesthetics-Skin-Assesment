@@ -88,12 +88,10 @@ const getArticleDetail = async (articleId, user) => {
       const limit = membershipLimits[userPackage];
 
       if (articlesAccessed >= limit) {
-        throw new ResponseError(403, "QUOTA_EXCEEDED", {
-          message: `You have reached your article limit (${articlesAccessed}/${limit}). Upgrade to access more content.`,
-          current_usage: articlesAccessed,
-          limit: limit,
-          package: userPackage,
-        });
+        throw new ResponseError(
+          403,
+          `You have reached your article limit (${articlesAccessed}/${limit}). Upgrade to access more content.`
+        );
       }
     }
 
@@ -228,12 +226,10 @@ const getVideoDetail = async (videoId, user) => {
       const limit = membershipLimits[userPackage];
 
       if (videosAccessed >= limit) {
-        throw new ResponseError(403, "QUOTA_EXCEEDED", {
-          message: `You have reached your video limit (${videosAccessed}/${limit}). Upgrade to access more content.`,
-          current_usage: videosAccessed,
-          limit: limit,
-          package: userPackage,
-        });
+        throw new ResponseError(
+          403,
+          `You have reached your video limit (${videosAccessed}/${limit}). Upgrade to access more content.`
+        );
       }
     }
 

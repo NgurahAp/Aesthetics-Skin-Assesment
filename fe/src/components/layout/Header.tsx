@@ -114,7 +114,7 @@ const Header: React.FC = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    href="/articles"
+                    href="#articles"
                     className="text-sm font-medium text-[#3a523a] hover:text-[#2d4a2d]"
                   >
                     Articles
@@ -122,7 +122,7 @@ const Header: React.FC = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    href="/videos"
+                    href="#videos"
                     className="text-sm font-medium text-[#3a523a] hover:text-[#2d4a2d]"
                   >
                     Videos
@@ -130,7 +130,7 @@ const Header: React.FC = () => {
                 </NavigationMenuItem>
                 <NavigationMenuItem>
                   <NavigationMenuLink
-                    href="/membership"
+                    href="#membership"
                     className="text-sm font-medium text-[#3a523a] hover:text-[#2d4a2d]"
                   >
                     Membership

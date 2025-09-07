@@ -101,7 +101,7 @@ const PricingSection = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#fefcf7] to-white py-16 px-4">
+    <div id="membership" className="min-h-screen bg-gradient-to-b from-[#fefcf7] to-white py-16 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
