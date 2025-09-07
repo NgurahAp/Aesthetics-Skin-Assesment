@@ -5,6 +5,7 @@ import { Clock, User, ChevronLeft, ChevronRight } from "lucide-react";
 import { Article } from "@/types/dashboard";
 import { useArticles } from "@/hooks/dashboard-hook";
 import Loading from "@/components/ui/Loading";
+import Link from "next/link";
 
 const ArticlesPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -135,19 +136,16 @@ const ArticlesPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <button
-                      className="w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
-                      onClick={() => {
-                        // Add your navigation logic here
-                        console.log(`Navigate to article: ${article.id}`);
-                      }}
+                    <Link
+                      href={`/articles/${article.id}`}
+                      className="flex justify-center w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
                     >
                       Read Article
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}
-            </div>
+            </div>  
 
             {/* Pagination */}
             {paging.total_pages > 1 && (

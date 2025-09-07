@@ -1,6 +1,7 @@
 import React from "react";
 import { Clock, User, Play } from "lucide-react";
 import { Video } from "@/types/dashboard";
+import Link from "next/link";
 
 interface ExpertVideosSectionProps {
   videos?: Video[];
@@ -76,19 +77,12 @@ const ExpertVideosSection: React.FC<ExpertVideosSectionProps> = ({
                     </div>
                   </div>
 
-                  <button
-                    className="w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2"
-                    onClick={() => {
-                      if (video.url) {
-                        window.open(video.url, "_blank");
-                      } else {
-                        console.log(`Play video: ${video.id}`);
-                      }
-                    }}
+                  <Link
+                    href={`/videos/${video.id}`}
+                    className="flex justify-center w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
                   >
-                    <Play className="w-4 h-4" fill="currentColor" />
                     Watch Video
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -110,14 +104,12 @@ const ExpertVideosSection: React.FC<ExpertVideosSectionProps> = ({
 
         {videos.length > 0 && (
           <div className="text-center mt-12">
-            <button
+            <Link
               className="bg-[#e1e8e1] hover:bg-[#c3d4c3] text-[#3a523a] px-8 py-3 rounded-xl font-medium transition-colors border border-[#a5c0a5] hover:border-[#87ac87]"
-              onClick={() => {
-                console.log("Navigate to all videos page");
-              }}
+              href={"/videos"}
             >
               View All Videos
-            </button>
+            </Link>
           </div>
         )}
       </div>

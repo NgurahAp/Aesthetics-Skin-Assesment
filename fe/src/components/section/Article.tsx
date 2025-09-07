@@ -1,6 +1,7 @@
 import React from "react";
 import { Clock, User } from "lucide-react";
 import { Article } from "@/types/dashboard";
+import Link from "next/link";
 
 interface ExpertArticlesSectionProps {
   articles?: Article[];
@@ -64,15 +65,12 @@ const ExpertArticlesSection: React.FC<ExpertArticlesSectionProps> = ({
                     </div>
                   </div>
 
-                  <button
-                    className="w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
-                    onClick={() => {
-                      // Add your navigation logic here
-                      console.log(`Navigate to article: ${article.id}`);
-                    }}
+                  <Link
+                    href={`/articles/${article.id}`}
+                    className="flex justify-center w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
                   >
                     Read Article
-                  </button>
+                  </Link>
                 </div>
               </div>
             ))}
@@ -95,15 +93,12 @@ const ExpertArticlesSection: React.FC<ExpertArticlesSectionProps> = ({
         {/* View All Button */}
         {articles.length > 0 && (
           <div className="text-center mt-12">
-            <button
+            <Link
               className="bg-[#e1e8e1] hover:bg-[#c3d4c3] text-[#3a523a] px-8 py-3 rounded-xl font-medium transition-colors border border-[#a5c0a5] hover:border-[#87ac87]"
-              onClick={() => {
-                // Add navigation to all articles page
-                console.log("Navigate to all articles page");
-              }}
+              href={"/articles"}
             >
               View All Articles
-            </button>
+            </Link>
           </div>
         )}
       </div>

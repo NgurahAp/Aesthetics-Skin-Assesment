@@ -5,11 +5,12 @@ import { Clock, User, Play, ChevronLeft, ChevronRight } from "lucide-react";
 import { Video } from "@/types/dashboard";
 import { useVideos } from "@/hooks/dashboard-hook";
 import Loading from "@/components/ui/Loading";
+import Link from "next/link";
 
 const VideosPage: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { data, isLoading, error, isError, isFetching } = useVideos({ 
-    page: currentPage 
+  const { data, isLoading, error, isError, isFetching } = useVideos({
+    page: currentPage,
   });
 
   if (isLoading && currentPage === 1) {
@@ -31,14 +32,18 @@ const VideosPage: React.FC = () => {
 
   // Extract videos and pagination data
   const videos = data?.data?.videos || [];
-  const paging = data?.data?.paging || { page: 1, total_items: 0, total_pages: 1 };
+  const paging = data?.data?.paging || {
+    page: 1,
+    total_items: 0,
+    total_pages: 1,
+  };
 
   // Format date function
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('id-ID', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString("id-ID", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
   };
 
@@ -158,19 +163,12 @@ const VideosPage: React.FC = () => {
                       </div>
                     </div>
 
-                    <button
-                      className="w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2"
-                      onClick={() => {
-                        if (video.url) {
-                          window.open(video.url, "_blank");
-                        } else {
-                          console.log(`Play video: ${video.id}`);
-                        }
-                      }}
+                    <Link
+                      href={`/videos/${video.id}`}
+                      className="flex justify-center w-full bg-[#4c6a4c] hover:bg-[#3a523a] text-white py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 hover:shadow-md"
                     >
-                      <Play className="w-4 h-4" fill="currentColor" />
                       Watch Video
-                    </button>
+                    </Link>
                   </div>
                 </div>
               ))}
@@ -229,7 +227,8 @@ const VideosPage: React.FC = () => {
 
             {/* Pagination Info */}
             <div className="text-center mt-4 text-sm text-[#6a9669]">
-              Showing page {paging.page} of {paging.total_pages} ({paging.total_items} total videos)
+              Showing page {paging.page} of {paging.total_pages} (
+              {paging.total_items} total videos)
             </div>
           </>
         ) : (
