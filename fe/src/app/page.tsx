@@ -27,8 +27,6 @@ const Home: React.FC = () => {
     );
   }
 
-  console.log("Dashboard Data:", data);
-
   const articles = data?.data?.articles || [];
   const videos = data?.data?.videos || [];
 

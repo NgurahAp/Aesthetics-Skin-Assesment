@@ -397,6 +397,7 @@ describe("Article Detail API", function () {
       .get(`/api/articles/${testArticle.id}`)
       .set("Authorization", "Bearer session-key-test");
 
+    console.log(result.body);
     expect(result.status).toBe(200);
     expect(result.body.data.success).toBe(true);
     expect(result.body.data.data.id).toBe(testArticle.id);

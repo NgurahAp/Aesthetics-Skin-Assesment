@@ -1,33 +1,45 @@
-// app/videos/[id]/page.tsx
 "use client";
 
 import { useParams } from "next/navigation";
 import { User, Clock, Play } from "lucide-react";
-
-// Dummy data untuk contoh
-const dummyVideo = {
-  id: "1",
-  title: "Morning Skincare Routine for Healthy Skin",
-  description: `
-    Start your day with the perfect skincare routine. 
-    In this video, we’ll cover the essential steps, 
-    from cleansing to moisturizing, and explain the 
-    science behind each step.
-  `,
-  thumbnail:
-    "https://images.unsplash.com/photo-1612817159949-d0f4a1d8a1d7?w=1200&h=600&fit=crop&crop=center",
-  category: "Tutorial",
-  author: "Dr. John Smith",
-  createdAt: "2025-09-07",
-  url: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-};
+import { useVideoDetail } from "@/hooks/dashboard-hook";
+import Loading from "@/components/ui/Loading";
 
 export default function VideoDetailPage() {
   const params = useParams();
-  const { id } = params; // param id dari URL
+  const { id } = params as { id: string };
 
-  // untuk saat ini abaikan id, langsung pake dummyVideo
-  const video = dummyVideo;
+  const { data: video, isLoading, error, isError } = useVideoDetail(id);
+
+  const videoData = video?.data.data;
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Error</h2>
+          <p className="text-gray-600">
+            {error?.message || "Failed to load video data"}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!video) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-600 mb-2">Not Found</h2>
+          <p className="text-gray-600">Video not found</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="py-16 px-4 bg-gradient-to-b from-[#fefcf7] to-white min-h-screen">
@@ -35,12 +47,12 @@ export default function VideoDetailPage() {
         {/* Thumbnail dengan play overlay */}
         <div className="relative rounded-2xl overflow-hidden shadow-lg mb-8">
           <img
-            src={video.thumbnail}
-            alt={video.title}
+            src={videoData?.thumbnail}
+            alt={videoData?.title}
             className="w-full h-96 object-cover"
           />
           <button
-            onClick={() => window.open(video.url, "_blank")}
+            onClick={() => window.open(videoData?.url, "_blank")}
             className="absolute inset-0 flex items-center justify-center bg-black/40 hover:bg-black/50 transition-colors"
           >
             <div className="w-20 h-20 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg">
@@ -55,10 +67,10 @@ export default function VideoDetailPage() {
         {/* Category + Title */}
         <div className="mb-6">
           <span className="bg-[#f5f0e3] text-[#3a523a] px-4 py-1 rounded-full text-sm font-medium">
-            {video.category}
+            {videoData?.category}
           </span>
           <h1 className="text-4xl font-bold text-[#2d4a2d] mt-4 leading-snug">
-            {video.title}
+            {videoData?.title}
           </h1>
         </div>
 
@@ -66,19 +78,13 @@ export default function VideoDetailPage() {
         <div className="flex items-center gap-6 text-sm text-[#6a9669] mb-10">
           <div className="flex items-center gap-2">
             <User className="w-4 h-4" />
-            <span>{video.author}</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <Clock className="w-4 h-4" />
-            <span>{new Date(video.createdAt).toLocaleDateString()}</span>
+            <span>{videoData?.author}</span>
           </div>
         </div>
 
         {/* Description */}
         <div className="prose prose-lg max-w-none text-[#4c6a4c] leading-relaxed">
-          {video.description.split("\n").map((para, i) => (
-            <p key={i}>{para.trim()}</p>
-          ))}
+          {videoData?.description}
         </div>
       </div>
     </div>

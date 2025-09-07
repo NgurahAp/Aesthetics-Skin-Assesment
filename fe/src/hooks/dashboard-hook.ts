@@ -55,3 +55,19 @@ export const useArticles = (params: PaginationParams = {}) => {
     queryFn: () => dashboardService.getArticles(params),
   });
 };
+
+export const useVideoDetail = (id: string) => {
+  return useQuery({
+    queryKey: ["video-detail", id],
+    queryFn: () => dashboardService.getVideoDetail(id),
+    enabled: !!id, // Only run query if id exists
+  });
+};
+
+export const useArticleDetail = (id: string) => {
+  return useQuery({
+    queryKey: ["article-detail", id],
+    queryFn: () => dashboardService.getArticleDetail(id),
+    enabled: !!id, // Only run query if id exists
+  });
+};

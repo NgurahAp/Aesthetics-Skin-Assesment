@@ -19,6 +19,15 @@ export interface Video {
   created_at: Date;
 }
 
+export interface MembershipInfo {
+  package: "A" | "B" | "C";
+  articles_accessed: number;
+  articles_limit: number;
+  videos_accessed: number;
+  videos_limit: number;
+  is_unlimited: boolean;
+}
+
 export interface DashboardData {
   articles: Article[];
   videos: Video[];
@@ -57,5 +66,21 @@ export interface VideosResponse {
     success: boolean;
     videos: Video[];
     paging: PaginationInfo;
+  };
+}
+
+export interface DetailArticleResponse {
+  data: {
+    success: boolean;
+    data: Article;
+    membership_info: MembershipInfo;
+  };
+}
+
+export interface DetailVideoResponse {
+  data: {
+    success: boolean;
+    data: Video;
+    membership_info: MembershipInfo;
   };
 }

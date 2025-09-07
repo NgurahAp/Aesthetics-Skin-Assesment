@@ -69,7 +69,7 @@ const getArticleDetail = async (articleId, user) => {
 
   // If not accessed before, check quota and create access record
   if (!existingAccess) {
-    const userPackage = user.Membership_package;
+    const userPackage = user.membership_package;
 
     // Skip quota check for unlimited package
     if (userPackage !== "C") {
@@ -127,7 +127,7 @@ const getArticleDetail = async (articleId, user) => {
     C: { articles: "unlimited", videos: "unlimited" },
   };
 
-  const userPackage = user.Membership_package;
+  const userPackage = user.membership_package;
   const limits = membershipLimits[userPackage];
 
   return {
@@ -210,7 +210,7 @@ const getVideoDetail = async (videoId, user) => {
   });
 
   if (!existingAccess) {
-    const userPackage = user.Membership_package;
+    const userPackage = user.membership_package;
 
     if (userPackage !== "C") {
       const videosAccessed = await prismaClient.userContentAccess.count({
@@ -267,7 +267,7 @@ const getVideoDetail = async (videoId, user) => {
     C: { articles: "unlimited", videos: "unlimited" },
   };
 
-  const userPackage = user.Membership_package;
+  const userPackage = user.membership_package;
   const limits = membershipLimits[userPackage];
 
   return {
