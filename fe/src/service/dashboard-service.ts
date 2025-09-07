@@ -1,6 +1,11 @@
 import api from "@/lib/axios";
 import { LoginResponse } from "@/types/auth";
-import { DashboardResponse, UpdateMembershipRequest } from "@/types/dashboard";
+import {
+  ArticlesResponse,
+  DashboardResponse,
+  UpdateMembershipRequest,
+  VideosResponse,
+} from "@/types/dashboard";
 
 export const dashboardService = {
   getDashboard: async (): Promise<DashboardResponse> => {
@@ -8,17 +13,23 @@ export const dashboardService = {
     return response.data;
   },
 
-   updateMembership: async (
-    membership_package: 'A' | 'B' | 'C'
+  updateMembership: async (
+    membership_package: "A" | "B" | "C"
   ): Promise<LoginResponse> => {
     const payload: UpdateMembershipRequest = {
-      package: membership_package
+      package: membership_package,
     };
-    
-    const response = await api.put<LoginResponse>(
-      "/membership", 
-      payload
-    );
+
+    const response = await api.put<LoginResponse>("/membership", payload);
+    return response.data;
+  },
+
+  getVideos: async (): Promise<VideosResponse> => {
+    const response = await api.get<VideosResponse>("/videos");
+    return response.data;
+  },
+  getArticles: async (): Promise<ArticlesResponse> => {
+    const response = await api.get<ArticlesResponse>("/articles");
     return response.data;
   },
 };

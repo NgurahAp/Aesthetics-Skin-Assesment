@@ -36,3 +36,17 @@ export const useUpdateMembership = () => {
     },
   });
 };
+
+export const useVideos = () => {
+  return useQuery({
+    queryKey: ["videos"],
+    queryFn: dashboardService.getVideos,
+  });
+};
+
+export const useArticles = () => {
+  return useQuery({
+    queryKey: ["articles"],
+    queryFn: dashboardService.getArticles,
+  });
+};

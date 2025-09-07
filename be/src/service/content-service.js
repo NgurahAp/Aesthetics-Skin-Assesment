@@ -20,6 +20,8 @@ const getArticles = async (query) => {
     select: {
       id: true,
       title: true,
+      author: true,
+      category: true,
       content: true,
       thumbnail: true,
       created_at: true,
@@ -45,6 +47,8 @@ const getArticleDetail = async (articleId, user) => {
     select: {
       id: true,
       title: true,
+      author: true,
+      category: true,
       content: true,
       thumbnail: true,
       created_at: true,
@@ -156,9 +160,11 @@ const getVideos = async (query) => {
     select: {
       id: true,
       title: true,
+      author: true,
+      category: true,
+      thumbnail: true,
       url: true,
       description: true,
-      thumbnail: true,
       created_at: true,
     },
   });
@@ -182,6 +188,9 @@ const getVideoDetail = async (videoId, user) => {
     select: {
       id: true,
       title: true,
+      author: true,
+      category: true,
+      thumbnail: true,
       url: true,
       description: true,
       created_at: true,

@@ -32,3 +32,13 @@ export interface DashboardResponse {
 export interface UpdateMembershipRequest {
   package: "A" | "B" | "C";
 }
+
+export interface ArticlesResponse {
+  success: boolean;
+  articles: Article[];
+}
+
+export interface VideosResponse {
+  success: boolean;
+  videos: Video[];
+}
