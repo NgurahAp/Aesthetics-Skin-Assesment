@@ -2,7 +2,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
-import { authService } from "@/service/authService";
+import { authService } from "@/service/auth-service";
 import { ApiError } from "@/types/error";
 
 export const useLogin = () => {
@@ -23,7 +23,7 @@ export const useLogin = () => {
 
       const apiErrorData = error.response?.data;
       const errorMessage =
-        apiErrorData?.errors || "Login failed. Please try again.";
+        apiErrorData?.message || "Login failed. Please try again.";
 
       toast.error(errorMessage);
     },
@@ -109,7 +109,7 @@ export const useRegister = () => {
 
       const apiErrorData = error.response?.data;
       const errorMessage =
-        apiErrorData?.errors || "Register failed. Please try again.";
+        apiErrorData?.message || "Register failed. Please try again.";
 
       toast.error(errorMessage);
     },

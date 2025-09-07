@@ -9,6 +9,9 @@ const getDashboardContent = async (user) => {
     select: {
       id: true,
       title: true,
+      author: true,
+      category: true,
+      content: true,
       thumbnail: true,
       created_at: true,
     },
@@ -22,6 +25,9 @@ const getDashboardContent = async (user) => {
     select: {
       id: true,
       title: true,
+      author: true,
+      category: true,
+      thumbnail: true,
       url: true,
       description: true,
       created_at: true,

@@ -10,7 +10,7 @@ import {
   useGoogleLogin,
   useFacebookLogin,
   useRegister,
-} from "@/hooks/auth-hooks";
+} from "@/hooks/auth-hook";
 import {
   LoginFormData,
   RegisterFormData,

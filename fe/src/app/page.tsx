@@ -6,7 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
 import { toast } from "sonner";
-import { useLogin, useGoogleLogin, useFacebookLogin } from "@/hooks/auth-hooks";
+import { useLogin, useGoogleLogin, useFacebookLogin } from "@/hooks/auth-hook";
 import { LoginFormData, loginSchema } from "@/lib/validation";
 
 export default function SignInPage() {
