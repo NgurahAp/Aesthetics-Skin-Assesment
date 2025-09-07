@@ -30,7 +30,7 @@ api.interceptors.response.use(
       useAuthStore.getState().logout();
       
       if (typeof window !== 'undefined') {
-        window.location.href = '/';
+        window.location.href = '/signIn';
       }
     }
     return Promise.reject(error);

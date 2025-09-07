@@ -6,35 +6,20 @@ import { useState } from "react";
 import Link from "next/link";
 import { clsx } from "clsx";
 import { toast } from "sonner";
-import {
-  useGoogleLogin,
-  useFacebookLogin,
-  useRegister,
-} from "@/hooks/auth-hook";
-import {
-  LoginFormData,
-  RegisterFormData,
-  signUpSchema,
-} from "@/lib/validation";
+import { useLogin, useGoogleLogin, useFacebookLogin } from "@/hooks/auth-hook";
+import { LoginFormData, loginSchema } from "@/lib/validation";
 
-export default function SignUpPage() {
-  const [fullName, setFullName] = useState("");
+export default function SignInPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const registerMutation = useRegister();
+  const loginMutation = useLogin();
   const googleLoginMutation = useGoogleLogin();
   const facebookLoginMutation = useFacebookLogin();
 
   const validateForm = (): boolean => {
-    const result = signUpSchema.safeParse({
-      fullName,
-      email,
-      password,
-      confirmPassword,
-    });
+    const result = loginSchema.safeParse({ email, password });
 
     if (result.success) {
       setErrors({});
@@ -59,13 +44,12 @@ export default function SignUpPage() {
       return;
     }
 
-    const formData: RegisterFormData = {
-      fullName: fullName,
+    const formData: LoginFormData = {
       email: email.trim(),
       password: password,
     };
 
-    registerMutation.mutate(formData);
+    loginMutation.mutate(formData);
   };
 
   const handleGoogleLogin = () => {
@@ -92,71 +76,74 @@ export default function SignUpPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-white">
         <div className="w-full max-w-md space-y-8">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Sign Up</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Log in or Sign Up
+            </h1>
           </div>
 
           <form className="space-y-6">
-            <Text
-              label="Full Name"
-              type="text"
-              value={fullName}
-              onChange={setFullName}
-              required
-              error={errors.fullName}
-              className={clsx(
-                errors.fullName &&
-                  "border-red-500 focus:ring-red-500 focus:border-red-500"
-              )}
-            />
-            <Text
-              label="Your Email / Username"
-              type="email"
-              value={email}
-              onChange={setEmail}
-              required
-              error={errors.email}
-              className={clsx(
-                errors.email &&
-                  "border-red-500 focus:ring-red-500 focus:border-red-500"
-              )}
-            />
-            <Text
-              label="Your Password"
-              type="password"
-              value={password}
-              onChange={setPassword}
-              required
-              error={errors.password}
-              className={clsx(
-                errors.password &&
-                  "border-red-500 focus:ring-red-500 focus:border-red-500"
-              )}
-            />
-            <Text
-              label="Confirm Password"
-              type="password"
-              value={confirmPassword}
-              onChange={setConfirmPassword}
-              required
-              error={errors.confirmPassword}
-              className={clsx(
-                errors.confirmPassword &&
-                  "border-red-500 focus:ring-red-500 focus:border-red-500"
-              )}
-            />
+            <div>
+              <Text
+                label="Your Email / Username"
+                type="email"
+                value={email}
+                onChange={setEmail}
+                required
+                error={errors.email}
+                className={clsx(
+                  errors.email &&
+                    "border-red-500 focus:ring-red-500 focus:border-red-500"
+                )}
+              />
+            </div>
+
+            <div>
+              <Text
+                label="Your Password"
+                type="password"
+                value={password}
+                onChange={setPassword}
+                required
+                error={errors.password}
+                className={clsx(
+                  errors.password &&
+                    "border-red-500 focus:ring-red-500 focus:border-red-500"
+                )}
+              />
+            </div>
+
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <input
+                  id="remember-me"
+                  name="remember-me"
+                  type="checkbox"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label
+                  htmlFor="remember-me"
+                  className="ml-2 block text-sm text-gray-700"
+                >
+                  Remember me
+                </label>
+              </div>
+              <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
+                Forgot password?
+              </a>
+            </div>
 
             <button
               type="button"
               onClick={handleSubmit}
-              disabled={registerMutation.isPending}
+              disabled={loginMutation.isPending}
               className={clsx(
                 "w-full font-semibold py-3 px-4 rounded-lg transition-all",
-                registerMutation.isPending
+                loginMutation.isPending
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-[#0062FF] hover:bg-blue-700 text-white"
               )}
             >
-              {registerMutation.isPending ? "Signing Up..." : "Sign Up"}
+              {loginMutation.isPending ? "Signing In..." : "Login"}
             </button>
 
             {/* Divider */}
@@ -222,12 +209,12 @@ export default function SignUpPage() {
           {/* Sign Up Link */}
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              Already have an account?{" "}
+              Don't have an account?{" "}
               <Link
-                href="/signIn"
+                href="/signUp"
                 className="font-medium text-blue-600 hover:text-blue-500"
               >
-                Sign in
+                Sign up
               </Link>
             </p>
           </div>

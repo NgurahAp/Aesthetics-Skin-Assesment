@@ -1,10 +1,10 @@
 export interface ApiErrorResponse {
-  message: string;
+  errors: string;
 }
 
 export interface ApiError {
   response?: {
-    data?: ApiErrorResponse;
+    data: ApiErrorResponse;
   };
   message?: string;
 }

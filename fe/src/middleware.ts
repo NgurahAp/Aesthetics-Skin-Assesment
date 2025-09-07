@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const protectedRoutes = ["/todo"];
+  const protectedRoutes = ["/videos, /articles"];
 
-  const publicRoutes = ["/", "/signup"];
+  const publicRoutes = ["/", "/signup", "/signIn"];
 
   const isProtectedRoute = protectedRoutes.some((route) =>
     pathname.startsWith(route)
@@ -27,13 +27,13 @@ export function middleware(request: NextRequest) {
     }
 
     if (!isAuthenticated) {
-      const loginUrl = new URL("/", request.url);
+      const loginUrl = new URL("/signIn", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);
     }
   }
 
-  if (isPublicRoute && pathname === "/") {
+  if (isPublicRoute && pathname === "/videos") {
     const authCookie = request.cookies.get("auth-storage");
 
     if (authCookie) {

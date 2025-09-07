@@ -76,7 +76,7 @@ const HeroSection: React.FC = () => {
   const AuthButtons = () => (
     <div className="flex gap-2">
       <Link
-        href={"/"}
+        href={"/signIn"}
         className="text-[#4c6a4c] hover:text-[#2d4a2d] px-3 py-2 text-sm font-medium"
       >
         Sign In

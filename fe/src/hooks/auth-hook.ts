@@ -15,7 +15,7 @@ export const useLogin = () => {
     onSuccess: (data) => {
       login(data.data);
       toast.success(data.message || "Login successful!");
-      const redirectTo = searchParams.get("redirect") || "/home";
+      const redirectTo = searchParams.get("redirect") || "/";
       router.push(redirectTo);
     },
     onError: (error: ApiError) => {
@@ -23,7 +23,7 @@ export const useLogin = () => {
 
       const apiErrorData = error.response?.data;
       const errorMessage =
-        apiErrorData?.message || "Login failed. Please try again.";
+        apiErrorData?.errors || "Login failed. Please try again.";
 
       toast.error(errorMessage);
     },
@@ -41,7 +41,7 @@ export const useGoogleLogin = () => {
       if (data.user) {
         login(data.user);
         toast.success(data.message || "Google login successful!");
-        const redirectTo = searchParams.get("redirect") || "/home";
+        const redirectTo = searchParams.get("redirect") || "/";
         router.push(redirectTo);
       }
     },
@@ -72,7 +72,7 @@ export const useFacebookLogin = () => {
       if (data.user) {
         login(data.user);
         toast.success(data.message || "Facebook login successful!");
-        const redirectTo = searchParams.get("redirect") || "/home";
+        const redirectTo = searchParams.get("redirect") || "/";
         router.push(redirectTo);
       }
     },
@@ -101,7 +101,7 @@ export const useRegister = () => {
     onSuccess: (data) => {
       toast.success(data.message || "Register successful!");
 
-      const redirectTo = searchParams.get("redirect") || "/";
+      const redirectTo = searchParams.get("redirect") || "/signIn";
       router.push(redirectTo);
     },
     onError: (error: ApiError) => {
@@ -109,7 +109,7 @@ export const useRegister = () => {
 
       const apiErrorData = error.response?.data;
       const errorMessage =
-        apiErrorData?.message || "Register failed. Please try again.";
+        apiErrorData?.errors || "Register failed. Please try again.";
 
       toast.error(errorMessage);
     },
@@ -123,7 +123,7 @@ export const useLogout = () => {
   const handleLogout = () => {
     logout();
     toast.success("Logged out successfully");
-    router.push("/");
+    router.push("/signIn");
   };
 
   return { logout: handleLogout };
