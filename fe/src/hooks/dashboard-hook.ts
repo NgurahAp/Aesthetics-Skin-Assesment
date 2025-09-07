@@ -1,13 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
-import { useAuthStore } from "@/store/auth-store";
 import { dashboardService } from "@/service/dashboard-service";
 
 export const useDashboard = () => {
-  const { isAuthenticated } = useAuthStore();
+  // const { isAuthenticated } = useAuthStore();
 
   return useQuery({
     queryKey: ["dashboard"],
     queryFn: dashboardService.getDashboard,
-    enabled: isAuthenticated,
+    // enabled: isAuthenticated,
   });
 };

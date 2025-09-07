@@ -1,9 +1,15 @@
-import React from 'react';
-import { Star, Zap, Crown, Check } from 'lucide-react';
+import React from "react";
+import { Star, Zap, Crown, Check } from "lucide-react";
+import { useAuthStore } from "@/store/auth-store";
 
 const PricingSection = () => {
+  const { user, isAuthenticated } = useAuthStore();
+
+  const currentPackage = user?.Membership_package || null;
+
   const plans = [
     {
+      id: "A",
       name: "Essential",
       icon: <Star className="w-6 h-6" />,
       description: "Perfect for skincare beginners",
@@ -11,17 +17,23 @@ const PricingSection = () => {
       period: "/month",
       features: [
         "Access to 5 articles",
-        "Access to 5 videos", 
+        "Access to 5 videos",
         "Basic skincare tips",
-        "Community support"
+        "Community support",
       ],
-      buttonText: "Current Plan",
-      buttonStyle: "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed",
-      borderColor: "border-[#a5c0a5]",
-      popular: false
+      buttonText: currentPackage === "A" ? "Current Plan" : "Select Plan",
+      buttonStyle:
+        currentPackage === "A"
+          ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
+          : "bg-[#4c6a4c] hover:bg-[#3a523a] text-white",
+      borderColor:
+        currentPackage === "A" ? "border-[#6a9669]" : "border-[#a5c0a5]",
+      popular: false,
+      isCurrent: currentPackage === "A",
     },
     {
-      name: "Advanced", 
+      id: "B",
+      name: "Advanced",
       icon: <Zap className="w-6 h-6" />,
       description: "For dedicated skincare enthusiasts",
       price: "$19",
@@ -29,19 +41,25 @@ const PricingSection = () => {
       features: [
         "Access to 10 articles",
         "Access to 10 videos",
-        "Advanced routines", 
+        "Advanced routines",
         "Expert consultations",
-        "Product recommendations"
+        "Product recommendations",
       ],
-      buttonText: "Select Plan",
-      buttonStyle: "bg-[#4c6a4c] hover:bg-[#3a523a] text-white",
-      borderColor: "border-[#87ac87]",
-      popular: true
+      buttonText: currentPackage === "B" ? "Current Plan" : "Select Plan",
+      buttonStyle:
+        currentPackage === "B"
+          ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
+          : "bg-[#4c6a4c] hover:bg-[#3a523a] text-white",
+      borderColor:
+        currentPackage === "B" ? "border-[#6a9669]" : "border-[#87ac87]",
+      popular: !isAuthenticated || !currentPackage, 
+      isCurrent: currentPackage === "B",
     },
     {
+      id: "C",
       name: "Premium",
       icon: <Crown className="w-6 h-6" />,
-      description: "Complete skincare mastery", 
+      description: "Complete skincare mastery",
       price: "$29",
       period: "/month",
       features: [
@@ -50,14 +68,30 @@ const PricingSection = () => {
         "Personalized routines",
         "1-on-1 expert sessions",
         "Exclusive content",
-        "Priority support"
+        "Priority support",
       ],
-      buttonText: "Select Plan", 
-      buttonStyle: "bg-[#faf6ed] hover:bg-[#f5f0e3] text-[#3a523a] border border-[#a5c0a5]",
-      borderColor: "border-[#f0ebd9]",
-      popular: false
-    }
+      buttonText: currentPackage === "C" ? "Current Plan" : "Select Plan",
+      buttonStyle:
+        currentPackage === "C"
+          ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
+          : "bg-[#faf6ed] hover:bg-[#f5f0e3] text-[#3a523a] border border-[#a5c0a5]",
+      borderColor:
+        currentPackage === "C" ? "border-[#6a9669]" : "border-[#f0ebd9]",
+      popular: false,
+      isCurrent: currentPackage === "C",
+    },
   ];
+
+  const handlePlanSelect = (planId: string) => {
+    if (planId === currentPackage) return; // Don't do anything if it's current plan
+
+    // Here you can add your plan selection logic
+    // For example, redirect to payment page or show upgrade modal
+    console.log(`Selected plan: ${planId}`);
+
+    // Example: redirect to upgrade page
+    // router.push(`/upgrade?plan=${planId}`);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#fefcf7] to-white py-16 px-4">
@@ -68,17 +102,33 @@ const PricingSection = () => {
             Choose Your Skincare Journey
           </h2>
           <p className="text-lg text-[#4c6a4c] max-w-2xl mx-auto">
-            Select the perfect plan for your skincare goals. All plans include access to our expert-curated content and supportive community.
+            Select the perfect plan for your skincare goals. All plans include
+            access to our expert-curated content and supportive community.
           </p>
+          {isAuthenticated && currentPackage && (
+            <div className="mt-4 p-3 bg-[#e8f3e8] rounded-lg inline-block">
+              <p className="text-[#3a523a] text-sm">
+                Welcome back, {user?.full_name}! You're currently on the{" "}
+                <span className="font-semibold">
+                  {plans.find((p) => p.id === currentPackage)?.name}
+                </span>{" "}
+                plan.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <div
-              key={index}
-              className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 ${plan.borderColor} border-2 ${
-                plan.popular ? 'transform scale-105 border-[#87ac87]' : ''
+              key={plan.id}
+              className={`relative bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 ${
+                plan.borderColor
+              } border-2 ${
+                plan.popular ? "transform scale-105 border-[#87ac87]" : ""
+              } ${
+                plan.isCurrent ? "ring-2 ring-[#6a9669] ring-opacity-50" : ""
               }`}
             >
               {/* Popular Badge */}
@@ -90,10 +140,23 @@ const PricingSection = () => {
                 </div>
               )}
 
+              {/* Current Plan Badge */}
+              {plan.isCurrent && (
+                <div className="absolute -top-4 right-4">
+                  <span className="bg-[#4c6a4c] text-white px-4 py-2 rounded-full text-xs font-medium shadow-lg">
+                    Current
+                  </span>
+                </div>
+              )}
+
               {/* Icon */}
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${
-                plan.popular ? 'bg-[#e1e8e1] text-[#4c6a4c]' : 'bg-[#faf6ed] text-[#4c6a4c]'
-              }`}>
+              <div
+                className={`w-12 h-12 rounded-xl flex items-center justify-center mb-6 ${
+                  plan.popular || plan.isCurrent
+                    ? "bg-[#e1e8e1] text-[#4c6a4c]"
+                    : "bg-[#faf6ed] text-[#4c6a4c]"
+                }`}
+              >
                 {plan.icon}
               </div>
 
@@ -109,9 +172,7 @@ const PricingSection = () => {
                   <span className="text-4xl font-bold text-[#2d4a2d]">
                     {plan.price}
                   </span>
-                  <span className="text-[#4c6a4c] ml-1">
-                    {plan.period}
-                  </span>
+                  <span className="text-[#4c6a4c] ml-1">{plan.period}</span>
                 </div>
               </div>
 
@@ -119,7 +180,10 @@ const PricingSection = () => {
               <div className="mb-8">
                 <ul className="space-y-3">
                   {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center text-sm text-[#3a523a]">
+                    <li
+                      key={featureIndex}
+                      className="flex items-center text-sm text-[#3a523a]"
+                    >
                       <Check className="w-4 h-4 text-[#6a9669] mr-3 flex-shrink-0" />
                       <span>{feature}</span>
                     </li>
@@ -128,9 +192,10 @@ const PricingSection = () => {
               </div>
 
               {/* Button */}
-              <button 
+              <button
                 className={`w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${plan.buttonStyle}`}
-                disabled={plan.buttonText === "Current Plan"}
+                disabled={plan.isCurrent}
+                onClick={() => handlePlanSelect(plan.id)}
               >
                 {plan.buttonText}
               </button>
@@ -143,6 +208,11 @@ const PricingSection = () => {
           <p className="text-[#4c6a4c] text-sm">
             All plans include 30-day money-back guarantee • Cancel anytime
           </p>
+          {!isAuthenticated && (
+            <p className="text-[#4c6a4c] text-xs mt-2">
+              Please log in to see your current plan and make changes
+            </p>
+          )}
         </div>
       </div>
     </div>

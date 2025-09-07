@@ -3,6 +3,7 @@ export interface User {
   email: string;
   full_name: string;
   role: string;
+  Membership_package: string;
   session_key: string;
 }
 

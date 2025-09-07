@@ -5,11 +5,7 @@ import contentController from "../controller/content-controller.js";
 
 const userRouter = express.Router();
 
-userRouter.get(
-  "/api/dashboard",
-  authMiddleware,
-  dashboardController.getDashboardContent
-);
+userRouter.get("/api/dashboard", dashboardController.getDashboardContent);
 userRouter.get(
   "/api/articles/:articleId",
   authMiddleware,

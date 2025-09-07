@@ -44,6 +44,7 @@ const login = async (request) => {
       email: true,
       full_name: true,
       role: true,
+      Membership_package: true,
       session_key: true,
     },
   });
