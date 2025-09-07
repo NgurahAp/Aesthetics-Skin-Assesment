@@ -6,7 +6,7 @@ export const createTestUser = async ({
   role = "member",
   sessionKey = "session-key-test",
   membershipPackage = "A",
-  fullName = "Test User"
+  fullName = "Test User",
 }) => {
   const hashedPassword = await bcrypt.hash("123456", 10);
   return prismaClient.user.create({
@@ -15,7 +15,7 @@ export const createTestUser = async ({
       password: hashedPassword,
       session_key: sessionKey,
       role: role,
-      Membership_package: membershipPackage,
+      membership_package: membershipPackage,
       full_name: fullName,
     },
   });

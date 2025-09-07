@@ -12,6 +12,8 @@ userRouter.put(
   authMiddleware,
   dashboardController.updateMembership
 );
+
+userRouter.get("/api/articles", authMiddleware, contentController.getArticles);
 userRouter.get(
   "/api/articles/:articleId",
   authMiddleware,

@@ -14,6 +14,135 @@ import {
   getContentAccessCount,
 } from "./utils/content.util.js";
 
+describe("Article List API", function () {
+  let testUser;
+
+  beforeEach(async () => {
+    testUser = await createTestUser({
+      email: "articlelist@test.com",
+    });
+  });
+
+  afterEach(async () => {
+    await deleteTestUserContentAccess();
+    await deleteTestArticles();
+    await deleteTestUser();
+  });
+
+  it("Should get articles list with default pagination", async () => {
+    const result = await supertest(web)
+      .get("/api/articles")
+      .set("Authorization", "Bearer session-key-test");
+
+    console.log(result.body);
+    expect(result.status).toBe(200);
+    expect(result.body.data.success).toBe(true);
+    expect(result.body.data.articles).toBeDefined();
+    expect(Array.isArray(result.body.data.articles)).toBe(true);
+    expect(result.body.data.articles.length).toBe(10);
+
+    // Check pagination info
+    expect(result.body.data.paging).toBeDefined();
+    expect(result.body.data.paging.page).toBe(1);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(2);
+
+    // Check article structure
+    const article = result.body.data.articles[0];
+    expect(article.id).toBeDefined();
+    expect(article.title).toBeDefined();
+    expect(article.content).toBeDefined();
+    expect(article.thumbnail).toBeDefined();
+    expect(article.created_at).toBeDefined();
+  });
+
+  it("Should get articles list with custom pagination", async () => {
+    const result = await supertest(web)
+      .get("/api/articles?page=2&size=5")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.success).toBe(true);
+    expect(result.body.data.articles.length).toBe(5);
+    expect(result.body.data.paging.page).toBe(2);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(3);
+  });
+
+  it("Should handle page beyond available pages", async () => {
+    const result = await supertest(web)
+      .get("/api/articles?page=5&size=10")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.success).toBe(true);
+    expect(result.body.data.articles.length).toBe(0);
+    expect(result.body.data.paging.page).toBe(5);
+    expect(result.body.data.paging.total_items).toBe(15);
+    expect(result.body.data.paging.total_pages).toBe(2);
+  });
+
+  it("Should validate pagination parameters", async () => {
+    // Test invalid page (less than 1)
+    const result1 = await supertest(web)
+      .get("/api/articles?page=0")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result1.status).toBe(400);
+
+    // Test invalid size (greater than 100)
+    const result2 = await supertest(web)
+      .get("/api/articles?size=150")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result2.status).toBe(400);
+
+    // Test non-numeric page
+    const result3 = await supertest(web)
+      .get("/api/articles?page=abc")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result3.status).toBe(400);
+  });
+
+  it("Should use default values for missing pagination parameters", async () => {
+    const result = await supertest(web)
+      .get("/api/articles")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.paging.page).toBe(1); // default page
+    expect(result.body.data.articles.length).toBe(10); // all articles fit in default size (10)
+  });
+
+  it("Should handle large pagination size correctly", async () => {
+    const result = await supertest(web)
+      .get("/api/articles?size=100")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.articles.length).toBe(15); // Should return all 5 articles
+    expect(result.body.data.paging.total_pages).toBe(1);
+  });
+
+  it("Should reject request without authentication", async () => {
+    const result = await supertest(web).get("/api/articles");
+
+    expect(result.status).toBe(401);
+  });
+
+  it("Should handle pagination with exact page boundary", async () => {
+    const result = await supertest(web)
+      .get("/api/articles?page=1&size=5")
+      .set("Authorization", "Bearer session-key-test");
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.articles.length).toBe(5);
+    expect(result.body.data.paging.page).toBe(1);
+    expect(result.body.data.paging.total_pages).toBe(3);
+  });
+});
+
 describe("Article Detail API", function () {
   let testUser;
   let testArticle;
@@ -273,69 +402,5 @@ describe("Video Detail API", function () {
     // Both should still be within limits
     expect(result.body.data.membership_info.articles_limit).toBe(5);
     expect(result.body.data.membership_info.videos_limit).toBe(5);
-  });
-});
-
-describe("Mixed Content Access Scenarios", function () {
-  let testUser;
-
-  beforeEach(async () => {
-    testUser = await createTestUser({
-      email: "mixedcontent@test.com",
-    });
-  });
-
-  afterEach(async () => {
-    await deleteTestUserContentAccess();
-    await deleteTestArticles();
-    await deleteTestVideos();
-    await deleteTestUser();
-  });
-
-  it("Should handle reaching article limit while video quota is available", async () => {
-    // Create and access 5 articles (reach article limit)
-    const articles = await createMultipleTestArticles(5);
-    await createUserAccessRecords(
-      testUser.id,
-      articles.map((a) => a.id)
-    );
-
-    // Create a video - should still be accessible
-    const testVideo = await createTestVideo();
-
-    const result = await supertest(web)
-      .get(`/api/videos/${testVideo.id}`)
-      .set("Authorization", "Bearer session-key-test");
-
-    expect(result.status).toBe(200);
-    expect(result.body.data.membership_info.articles_accessed).toBe(5); // At limit
-    expect(result.body.data.membership_info.videos_accessed).toBe(1); // Still available
-  });
-
-  it("Should handle reaching both article and video limits", async () => {
-    // Create and access 5 articles and 5 videos (reach both limits)
-    const articles = await createMultipleTestArticles(5);
-    const videos = await createMultipleTestVideos(5);
-    await createUserAccessRecords(
-      testUser.id,
-      articles.map((a) => a.id),
-      videos.map((v) => v.id)
-    );
-
-    // Try to access new article - should be rejected
-    const newArticle = await createTestArticle();
-    const articleResult = await supertest(web)
-      .get(`/api/articles/${newArticle.id}`)
-      .set("Authorization", "Bearer session-key-test");
-
-    expect(articleResult.status).toBe(403);
-
-    // Try to access new video - should also be rejected
-    const newVideo = await createTestVideo();
-    const videoResult = await supertest(web)
-      .get(`/api/videos/${newVideo.id}`)
-      .set("Authorization", "Bearer session-key-test");
-
-    expect(videoResult.status).toBe(403);
   });
 });

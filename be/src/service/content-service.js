@@ -1,5 +1,41 @@
 import { prismaClient } from "../application/database.js";
 import { ResponseError } from "../error/response-error.js";
+import { pagingValidation } from "../validation/request-validation.js";
+import { validate } from "../validation/validation.js";
+
+const getArticles = async (query) => {
+  const option = validate(pagingValidation, query);
+
+  const skip = (option.page - 1) * option.size;
+
+  const totalArticle = await prismaClient.article.count({});
+
+  const articles = await prismaClient.article.findMany({
+    skip: skip,
+    take: option.size,
+    orderBy: {
+      created_at: "desc",
+    },
+
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      thumbnail: true,
+      created_at: true,
+    },
+  });
+
+  return {
+    success: true,
+    articles: articles,
+    paging: {
+      page: option.page,
+      total_items: totalArticle,
+      total_pages: Math.ceil(totalArticle / option.size),
+    },
+  };
+};
 
 const getArticleDetail = async (articleId, user) => {
   const article = await prismaClient.article.findUnique({
@@ -30,7 +66,7 @@ const getArticleDetail = async (articleId, user) => {
   // If not accessed before, check quota and create access record
   if (!existingAccess) {
     const userPackage = user.Membership_package;
-    
+
     // Skip quota check for unlimited package
     if (userPackage !== "C") {
       const articlesAccessed = await prismaClient.userContentAccess.count({
@@ -132,7 +168,7 @@ const getVideoDetail = async (videoId, user) => {
 
   if (!existingAccess) {
     const userPackage = user.Membership_package;
-    
+
     if (userPackage !== "C") {
       const videosAccessed = await prismaClient.userContentAccess.count({
         where: {
@@ -208,4 +244,5 @@ const getVideoDetail = async (videoId, user) => {
 export default {
   getArticleDetail,
   getVideoDetail,
+  getArticles,
 };

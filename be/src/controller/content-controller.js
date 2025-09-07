@@ -1,6 +1,20 @@
 import { logger } from "../application/logging.js";
 import contentService from "../service/content-service.js";
 
+const getArticles = async (req, res, next) => {
+  try {
+    const result = await contentService.getArticles(req.query);
+    res.status(200).json({
+      data: result,
+    });
+  } catch (e) {
+    logger.error("Get detail content failed", {
+      error: e.message,
+    });
+    next(e);
+  }
+};
+
 const getArticleDetail = async (req, res, next) => {
   try {
     const articleId = req.params.articleId;
@@ -36,4 +50,5 @@ const getVideoDetail = async (req, res, next) => {
 export default {
   getArticleDetail,
   getVideoDetail,
+  getArticles,
 };

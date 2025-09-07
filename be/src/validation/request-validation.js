@@ -15,8 +15,14 @@ const changeMembershipValidation = Joi.object({
   package: Joi.string().valid("A", "B", "C").required(),
 });
 
+const pagingValidation = Joi.object({
+  page: Joi.number().integer().min(1).default(1),
+  size: Joi.number().integer().min(1).max(100).default(10),
+});
+
 export {
   loginUserValidation,
   registerUserValidation,
   changeMembershipValidation,
+  pagingValidation,
 };

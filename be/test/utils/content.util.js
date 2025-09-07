@@ -1,16 +1,17 @@
-// test/utils/content.util.js
 import { prismaClient } from "../../src/application/database.js";
 
 export const createTestArticle = async ({
   title = "Test Article",
   content = "This is test article content",
-  thumbnail = "https://example.com/thumbnail.jpg"
+  thumbnail = "https://example.com/thumbnail.jpg",
 } = {}) => {
   return prismaClient.article.create({
     data: {
       title: title,
       content: content,
       thumbnail: thumbnail,
+      author: "Test Author",
+      category: "Test Category",
     },
   });
 };
@@ -18,13 +19,16 @@ export const createTestArticle = async ({
 export const createTestVideo = async ({
   title = "Test Video",
   url = "https://example.com/video.mp4",
-  description = "This is test video description"
+  description = "This is test video description",
 } = {}) => {
   return prismaClient.video.create({
     data: {
       title: title,
       url: url,
       description: description,
+      author: "Test Author",
+      category: "Test Category",
+      thumbnail: "https://example.com/thumbnail.jpg",
     },
   });
 };
@@ -34,7 +38,7 @@ export const createTestUserContentAccess = async ({
   contentType,
   contentId,
   articleId = null,
-  videoId = null
+  videoId = null,
 }) => {
   return prismaClient.userContentAccess.create({
     data: {
@@ -53,7 +57,7 @@ export const createMultipleTestArticles = async (count = 5) => {
     const article = await createTestArticle({
       title: `Test Article ${i}`,
       content: `Content for test article ${i}`,
-      thumbnail: `https://example.com/thumbnail${i}.jpg`
+      thumbnail: `https://example.com/thumbnail${i}.jpg`,
     });
     articles.push(article);
   }
@@ -66,7 +70,7 @@ export const createMultipleTestVideos = async (count = 5) => {
     const video = await createTestVideo({
       title: `Test Video ${i}`,
       url: `https://example.com/video${i}.mp4`,
-      description: `Description for test video ${i}`
+      description: `Description for test video ${i}`,
     });
     videos.push(video);
   }
@@ -77,7 +81,7 @@ export const deleteTestArticles = async () => {
   return prismaClient.article.deleteMany({
     where: {
       title: {
-        startsWith: "Test Article",
+        startsWith: "Test ",
       },
     },
   });
@@ -87,7 +91,7 @@ export const deleteTestVideos = async () => {
   return prismaClient.video.deleteMany({
     where: {
       title: {
-        startsWith: "Test Video",
+        startsWith: "Test ",
       },
     },
   });
@@ -105,9 +109,13 @@ export const deleteTestUserContentAccess = async () => {
   });
 };
 
-export const createUserAccessRecords = async (userId, articleIds = [], videoIds = []) => {
+export const createUserAccessRecords = async (
+  userId,
+  articleIds = [],
+  videoIds = []
+) => {
   const accessRecords = [];
-  
+
   for (const articleId of articleIds) {
     const record = await createTestUserContentAccess({
       userId: userId,
@@ -117,7 +125,7 @@ export const createUserAccessRecords = async (userId, articleIds = [], videoIds 
     });
     accessRecords.push(record);
   }
-  
+
   for (const videoId of videoIds) {
     const record = await createTestUserContentAccess({
       userId: userId,
@@ -127,7 +135,7 @@ export const createUserAccessRecords = async (userId, articleIds = [], videoIds 
     });
     accessRecords.push(record);
   }
-  
+
   return accessRecords;
 };
 
