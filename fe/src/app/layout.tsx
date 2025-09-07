@@ -1,7 +1,9 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import { Roboto, Poppins } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/Providers";
+import MainLayout from "@/components/layout/MainLayout";
 
 const roboto = Roboto({
   weight: ["300", "400", "500", "700"],
@@ -28,7 +30,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${roboto.variable} ${poppins.variable}`}>
       <body className={roboto.className}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <MainLayout>
+            {children}
+          </MainLayout>
+        </Providers>
       </body>
     </html>
   );

@@ -4,7 +4,6 @@ import HeroSection from "@/components/section/Hero";
 import PricingSection from "@/components/section/Pricing";
 import ExpertArticlesSection from "@/components/section/Article";
 import ExpertVideosSection from "@/components/section/Video";
-import Footer from "@/components/section/Footer";
 import { useDashboard } from "@/hooks/dashboard-hook";
 import Loading from "@/components/ui/Loading";
 
@@ -39,7 +38,6 @@ const Home: React.FC = () => {
       <PricingSection />
       <ExpertArticlesSection articles={articles} />
       <ExpertVideosSection videos={videos} />
-      <Footer />
     </>
   );
 };
