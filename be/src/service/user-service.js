@@ -11,7 +11,7 @@ import crypto from "crypto";
 const login = async (request) => {
   const loginRequest = validate(loginUserValidation, request);
 
-const user = await prismaClient.user.findUnique({
+  const user = await prismaClient.user.findUnique({
     where: {
       email: loginRequest.email,
     },
@@ -44,7 +44,7 @@ const user = await prismaClient.user.findUnique({
       email: true,
       full_name: true,
       role: true,
-      Membership_package: true,
+      membership_package: true,
       session_key: true,
     },
   });

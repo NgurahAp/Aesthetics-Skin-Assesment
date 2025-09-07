@@ -28,3 +28,7 @@ export interface DashboardResponse {
   success: boolean;
   data: DashboardData;
 }
+
+export interface UpdateMembershipRequest {
+  package: "A" | "B" | "C";
+}

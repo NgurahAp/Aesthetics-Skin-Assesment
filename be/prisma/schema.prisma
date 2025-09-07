@@ -21,7 +21,7 @@ model User {
   google_id           String?             @unique @db.VarChar(255) 
   facebook_id         String?             @unique @db.VarChar(255) 
   role                Role                @default(member)
-  Membership_package  Package             @default(A)
+  membership_package  Package             @default(A)
   session_key         String?             @db.VarChar(255)
   created_at          DateTime            @default(now())
   updated_at          DateTime            @updatedAt

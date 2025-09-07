@@ -33,7 +33,7 @@ passport.use(
               email: true,
               full_name: true,
               role: true,
-              Membership_package: true,
+              membership_package: true,
               session_key: true,
             },
           });
@@ -62,7 +62,7 @@ passport.use(
               email: true,
               full_name: true,
               role: true,
-              Membership_package: true,
+              membership_package: true,
               session_key: true,
             },
           });
@@ -84,7 +84,7 @@ passport.use(
             email: true,
             full_name: true,
             role: true,
-            Membership_package: true,
+            membership_package: true,
             session_key: true,
           },
         });
@@ -127,7 +127,7 @@ passport.use(
               email: true,
               full_name: true,
               role: true,
-              Membership_package: true,
+              membership_package: true,
               session_key: true,
             },
           });
@@ -161,7 +161,7 @@ passport.use(
                 email: true,
                 full_name: true,
                 role: true,
-                Membership_package: true,
+                membership_package: true,
                 session_key: true,
               },
             });
@@ -184,7 +184,7 @@ passport.use(
             email: true,
             full_name: true,
             role: true,
-            Membership_package: true,
+            membership_package: true,
             session_key: true,
           },
         });
@@ -210,7 +210,7 @@ passport.deserializeUser(async (id, done) => {
         email: true,
         full_name: true,
         role: true,
-        Membership_package: true,
+        membership_package: true,
         session_key: true,
       },
     });

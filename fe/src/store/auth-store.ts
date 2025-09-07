@@ -15,7 +15,6 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         };
         set(newState);
-
         setAuthCookie({ ...get(), ...newState });
       },
 
@@ -25,8 +24,25 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: false,
         };
         set(newState);
-
         removeAuthCookie();
+      },
+
+      updateMembership: (packageType: 'A' | 'B' | 'C') => {
+        const currentUser = get().user;
+        if (currentUser) {
+          const updatedUser = {
+            ...currentUser,
+            membership_package: packageType
+          };
+          
+          const newState = {
+            user: updatedUser,
+            isAuthenticated: true,
+          };
+          
+          set(newState);
+          setAuthCookie({ ...get(), ...newState });
+        }
       },
     }),
     {

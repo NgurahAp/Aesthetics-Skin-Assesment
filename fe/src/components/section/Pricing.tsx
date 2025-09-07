@@ -1,11 +1,15 @@
 import React from "react";
 import { Star, Zap, Crown, Check } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth-store";
+import { useUpdateMembership } from "@/hooks/dashboard-hook";
 
 const PricingSection = () => {
+  const router = useRouter();
   const { user, isAuthenticated } = useAuthStore();
+  const { mutate: updateMembership, isPending } = useUpdateMembership();
 
-  const currentPackage = user?.Membership_package || null;
+  const currentPackage = user?.membership_package || null;
 
   const plans = [
     {
@@ -24,7 +28,7 @@ const PricingSection = () => {
       buttonText: currentPackage === "A" ? "Current Plan" : "Select Plan",
       buttonStyle:
         currentPackage === "A"
-            ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
+          ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
           : "bg-[#faf6ed] hover:bg-[#f5f0e3] text-[#3a523a] border border-[#a5c0a5]",
       borderColor:
         currentPackage === "A" ? "border-[#6a9669]" : "border-[#f0ebd9]",
@@ -52,7 +56,7 @@ const PricingSection = () => {
           : "bg-[#4c6a4c] hover:bg-[#3a523a] text-white",
       borderColor:
         currentPackage === "B" ? "border-[#6a9669]" : "border-[#87ac87]",
-      popular: !isAuthenticated || !currentPackage, 
+      popular: !isAuthenticated || !currentPackage,
       isCurrent: currentPackage === "B",
     },
     {
@@ -82,15 +86,18 @@ const PricingSection = () => {
     },
   ];
 
-  const handlePlanSelect = (planId: string) => {
+  const handlePlanSelect = (planId: "A" | "B" | "C") => {
     if (planId === currentPackage) return; // Don't do anything if it's current plan
 
-    // Here you can add your plan selection logic
-    // For example, redirect to payment page or show upgrade modal
-    console.log(`Selected plan: ${planId}`);
+    // Check if user is authenticated
+    if (!isAuthenticated) {
+      // Redirect to login page if not authenticated
+      router.push("/signIn");
+      return;
+    }
 
-    // Example: redirect to upgrade page
-    // router.push(`/upgrade?plan=${planId}`);
+    // Update membership using the hook
+    updateMembership(planId);
   };
 
   return (
@@ -193,11 +200,39 @@ const PricingSection = () => {
 
               {/* Button */}
               <button
-                className={`w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${plan.buttonStyle}`}
-                disabled={plan.isCurrent}
-                onClick={() => handlePlanSelect(plan.id)}
+                className={`w-full py-3 px-4 rounded-xl font-medium text-sm transition-all duration-200 ${
+                  plan.buttonStyle
+                } ${isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                disabled={plan.isCurrent || isPending}
+                onClick={() => handlePlanSelect(plan.id as "A" | "B" | "C")}
               >
-                {plan.buttonText}
+                {isPending ? (
+                  <span className="flex items-center justify-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4 text-current"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                    Processing...
+                  </span>
+                ) : (
+                  plan.buttonText
+                )}
               </button>
             </div>
           ))}

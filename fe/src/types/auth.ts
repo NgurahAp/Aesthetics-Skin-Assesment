@@ -3,7 +3,7 @@ export interface User {
   email: string;
   full_name: string;
   role: string;
-  Membership_package: string;
+  membership_package: 'A' | 'B' | 'C';
   session_key: string;
 }
 
@@ -19,4 +19,6 @@ export interface AuthState {
   isAuthenticated: boolean;
   login: (user: User) => void;
   logout: () => void;
+  updateMembership: (packageType: 'A' | 'B' | 'C') => void;
+
 }

@@ -51,13 +51,13 @@ const updateMembership = async (request, user) => {
       id: user.id,
     },
     data: {
-      Membership_package: packageValidation.package,
+      membership_package: packageValidation.package,
     },
     select: {
       id: true,
       email: true,
       full_name: true,
-      Membership_package: true,
+      membership_package: true,
     },
   });
 };
