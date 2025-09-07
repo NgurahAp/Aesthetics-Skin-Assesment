@@ -33,12 +33,29 @@ export interface UpdateMembershipRequest {
   package: "A" | "B" | "C";
 }
 
+export interface PaginationParams {
+  page?: number;
+  size?: number;
+}
+
+export interface PaginationInfo {
+  page: number;
+  total_items: number;
+  total_pages: number;
+}
+
 export interface ArticlesResponse {
-  success: boolean;
-  articles: Article[];
+  data: {
+    success: boolean;
+    articles: Article[];
+    paging: PaginationInfo;
+  };
 }
 
 export interface VideosResponse {
-  success: boolean;
-  videos: Video[];
+  data: {
+    success: boolean;
+    videos: Video[];
+    paging: PaginationInfo;
+  };
 }

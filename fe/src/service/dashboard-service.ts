@@ -5,6 +5,7 @@ import {
   DashboardResponse,
   UpdateMembershipRequest,
   VideosResponse,
+  PaginationParams,
 } from "@/types/dashboard";
 
 export const dashboardService = {
@@ -24,12 +25,29 @@ export const dashboardService = {
     return response.data;
   },
 
-  getVideos: async (): Promise<VideosResponse> => {
-    const response = await api.get<VideosResponse>("/videos");
+  getVideos: async (params: PaginationParams = {}): Promise<VideosResponse> => {
+    const { page = 1, size = 10 } = params;
+    const queryParams = new URLSearchParams();
+    
+    queryParams.append('page', page.toString());
+    if (size !== 10) {
+      queryParams.append('size', size.toString());
+    }
+
+    const response = await api.get<VideosResponse>(`/videos?${queryParams.toString()}`);
     return response.data;
   },
-  getArticles: async (): Promise<ArticlesResponse> => {
-    const response = await api.get<ArticlesResponse>("/articles");
+
+  getArticles: async (params: PaginationParams = {}): Promise<ArticlesResponse> => {
+    const { page = 1, size = 10 } = params;
+    const queryParams = new URLSearchParams();
+    
+    queryParams.append('page', page.toString());
+    if (size !== 10) {
+      queryParams.append('size', size.toString());
+    }
+
+    const response = await api.get<ArticlesResponse>(`/articles?${queryParams.toString()}`);
     return response.data;
   },
 };

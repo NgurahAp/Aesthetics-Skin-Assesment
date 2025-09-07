@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { dashboardService } from "@/service/dashboard-service";
 import { useAuthStore } from "@/store/auth-store";
 import { toast } from "sonner";
+import { PaginationParams } from "@/types/dashboard";
 
 export const useDashboard = () => {
   return useQuery({
@@ -37,16 +38,20 @@ export const useUpdateMembership = () => {
   });
 };
 
-export const useVideos = () => {
+export const useVideos = (params: PaginationParams = {}) => {
+  const { page = 1, size = 10 } = params;
+  
   return useQuery({
-    queryKey: ["videos"],
-    queryFn: dashboardService.getVideos,
+    queryKey: ["videos", { page, size }],
+    queryFn: () => dashboardService.getVideos(params),
   });
 };
 
-export const useArticles = () => {
+export const useArticles = (params: PaginationParams = {}) => {
+  const { page = 1, size = 10 } = params;
+  
   return useQuery({
-    queryKey: ["articles"],
-    queryFn: dashboardService.getArticles,
+    queryKey: ["articles", { page, size }],
+    queryFn: () => dashboardService.getArticles(params),
   });
 };
