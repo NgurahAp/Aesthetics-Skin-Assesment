@@ -30,16 +30,15 @@ const Home: React.FC = () => {
 
   console.log("Dashboard Data:", data);
 
-  // Extract articles and videos from the data
   const articles = data?.data?.articles || [];
-  // const videos = data?.data?.data.videos || [];
+  const videos = data?.data?.videos || [];
 
   return (
     <>
       <HeroSection />
       <PricingSection />
       <ExpertArticlesSection articles={articles} />
-      <ExpertVideosSection />
+      <ExpertVideosSection videos={videos} />
       <Footer />
     </>
   );

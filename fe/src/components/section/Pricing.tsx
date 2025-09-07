@@ -24,10 +24,10 @@ const PricingSection = () => {
       buttonText: currentPackage === "A" ? "Current Plan" : "Select Plan",
       buttonStyle:
         currentPackage === "A"
-          ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
-          : "bg-[#4c6a4c] hover:bg-[#3a523a] text-white",
+            ? "bg-[#c3d4c3] text-[#3a523a] cursor-not-allowed"
+          : "bg-[#faf6ed] hover:bg-[#f5f0e3] text-[#3a523a] border border-[#a5c0a5]",
       borderColor:
-        currentPackage === "A" ? "border-[#6a9669]" : "border-[#a5c0a5]",
+        currentPackage === "A" ? "border-[#6a9669]" : "border-[#f0ebd9]",
       popular: false,
       isCurrent: currentPackage === "A",
     },
