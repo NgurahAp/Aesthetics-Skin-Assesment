@@ -3,7 +3,7 @@ import { ResponseError } from "../error/response-error.js";
 import {
   loginUserValidation,
   registerUserValidation,
-} from "../validation/user-validation.js";
+} from "../validation/request-validation.js";
 import { validate } from "../validation/validation.js";
 import bcrypt from "bcrypt";
 import crypto from "crypto";
@@ -11,7 +11,7 @@ import crypto from "crypto";
 const login = async (request) => {
   const loginRequest = validate(loginUserValidation, request);
 
-  const user = await prismaClient.user.findUnique({
+const user = await prismaClient.user.findUnique({
     where: {
       email: loginRequest.email,
     },

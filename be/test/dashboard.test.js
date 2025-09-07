@@ -11,6 +11,7 @@ import {
   deleteTestVideos,
   deleteTestUserContentAccess,
 } from "./utils/content.util.js";
+import { prismaClient } from "../src/application/database.js";
 
 describe("GET /api/dashboard", function () {
   let testUser;
@@ -178,5 +179,201 @@ describe("GET /api/dashboard", function () {
 
     // Should return latest 3 articles (newest first)
     const returnedTitles = result.body.data.data.articles.map((a) => a.title);
+  });
+});
+
+describe("PUT /api/membership", function () {
+  let testUser;
+
+  beforeEach(async () => {
+    testUser = await createTestUser({
+      email: "membership@test.com",
+      membershipPackage: "A"
+    });
+  });
+
+  afterEach(async () => {
+    await deleteTestUser();
+  });
+
+  it("Should successfully update membership from A to B", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "B"
+      });
+
+    console.log(result.body);
+    expect(result.status).toBe(200);
+    expect(result.body.data).toBeDefined();
+    expect(result.body.data.Membership_package).toBe("B");
+
+    // Verify in database
+    const updatedUser = await prismaClient.user.findUnique({
+      where: { id: testUser.id }
+    });
+    expect(updatedUser.Membership_package).toBe("B");
+  });
+
+  it("Should successfully update membership from A to C", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "C"
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data).toBeDefined();
+    expect(result.body.data.Membership_package).toBe("C");
+
+    // Verify in database
+    const updatedUser = await prismaClient.user.findUnique({
+      where: { id: testUser.id }
+    });
+    expect(updatedUser.Membership_package).toBe("C");
+  });
+
+  it("Should successfully update membership from B to A", async () => {
+    // Create user with package B
+    await deleteTestUser();
+    testUser = await createTestUser({
+      email: "membership@test.com",
+      membershipPackage: "B"
+    });
+
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "A"
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.Membership_package).toBe("A");
+  });
+
+  it("Should successfully update membership from C to B", async () => {
+    // Create user with package C
+    await deleteTestUser();
+    testUser = await createTestUser({
+      email: "membership@test.com",
+      membershipPackage: "C"
+    });
+
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "B"
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.Membership_package).toBe("B");
+  });
+
+  it("Should reject request with invalid package value", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "D" // Invalid package
+      });
+
+    expect(result.status).toBe(400);
+  });
+
+  it("Should reject request with missing package field", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({});
+
+    expect(result.status).toBe(400);
+  });
+
+  it("Should reject request with null package value", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: null
+      });
+
+    expect(result.status).toBe(400);
+  });
+
+  it("Should reject request with empty string package value", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: ""
+      });
+
+    expect(result.status).toBe(400);
+  });
+
+  it("Should reject request without authentication", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .send({
+        package: "B"
+      });
+
+    expect(result.status).toBe(401);
+  });
+
+  it("Should reject request with invalid session key", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer invalid-session-key")
+      .send({
+        package: "B"
+      });
+
+    expect(result.status).toBe(401);
+  });
+
+  it("Should handle same package update (no change)", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "A" // Same as current package
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body.data.Membership_package).toBe("A");
+
+    // Verify in database
+    const updatedUser = await prismaClient.user.findUnique({
+      where: { id: testUser.id }
+    });
+    expect(updatedUser.Membership_package).toBe("A");
+  });
+
+  it("Should reject request with additional invalid fields", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: "B",
+        invalidField: "should not be here"
+      });
+
+    expect(result.status).toBe(400);
+  });
+
+  it("Should reject request with wrong data type for package", async () => {
+    const result = await supertest(web)
+      .put("/api/membership")
+      .set("Authorization", "Bearer session-key-test")
+      .send({
+        package: 123 // Should be string
+      });
+
+    expect(result.status).toBe(400);
   });
 });

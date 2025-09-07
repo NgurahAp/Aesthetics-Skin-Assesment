@@ -1,4 +1,6 @@
 import { prismaClient } from "../application/database.js";
+import { changeMembershipValidation } from "../validation/request-validation.js";
+import { validate } from "../validation/validation.js";
 
 const getDashboardContent = async () => {
   const articles = await prismaClient.article.findMany({
@@ -41,6 +43,26 @@ const getDashboardContent = async () => {
   };
 };
 
+const updateMembership = async (request, user) => {
+  const packageValidation = validate(changeMembershipValidation, request);
+
+  return prismaClient.user.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      Membership_package: packageValidation.package,
+    },
+    select: {
+      id: true,
+      email: true,
+      full_name: true,
+      Membership_package: true,
+    },
+  });
+};
+
 export default {
   getDashboardContent,
+  updateMembership,
 };

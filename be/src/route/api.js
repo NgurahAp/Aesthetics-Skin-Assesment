@@ -6,6 +6,12 @@ import contentController from "../controller/content-controller.js";
 const userRouter = express.Router();
 
 userRouter.get("/api/dashboard", dashboardController.getDashboardContent);
+
+userRouter.put(
+  "/api/membership",
+  authMiddleware,
+  dashboardController.updateMembership
+);
 userRouter.get(
   "/api/articles/:articleId",
   authMiddleware,
